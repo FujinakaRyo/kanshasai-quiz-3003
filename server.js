@@ -37,7 +37,8 @@ const state = {
   scored: {},            // qid -> true（二重採点防止）
   emergencyMode: false,  // true → 全プレイヤーを簡易版(/emergency)へリダイレクト
   pubUrl: '',            // 管理者が設定した公開URL（present画面のQR用）
-  awardStep: -1,         // 表彰式ステップ（0=100-81位, 1=80-61位, ..., 8=1位, 9=部-3位, 10=部2位, 11=部1位）
+  awardStep: -1,         // 表彰式ステップ
+  deptAdjustments: {},   // 部署名 → 調整点数
 };
 
 try {
@@ -57,7 +58,7 @@ try {
 //   まっさらに始めたいときは STATE_FILE を消すか、FRESH=1 node server.js で起動。
 // ---------------------------------------------------------------------------
 const STATE_FILE = nodePath.join(__dirname, 'kanshasai-quiz-3003.state.json');
-const PERSIST_KEYS = ['phase', 'activePeriodId', 'players', 'answers', 'currentIndex', 'startedAt', 'scored', 'emergencyMode', 'pubUrl', 'awardStep'];
+const PERSIST_KEYS = ['phase', 'activePeriodId', 'players', 'answers', 'currentIndex', 'startedAt', 'scored', 'emergencyMode', 'pubUrl', 'awardStep', 'deptAdjustments'];
 let stateDirty = false;
 function markStateDirty() { stateDirty = true; }
 function saveState() {
@@ -182,9 +183,13 @@ function computeDeptRankingList() {
     deptMap[dept].count += 1;
   });
   return Object.values(deptMap)
-    .map((d) => ({ dept: d.dept, avg: Math.round(d.total / d.count), total: d.total, count: d.count }))
+    .map((d) => {
+      const adjustment = state.deptAdjustments[d.dept] || 0;
+      const adjustedTotal = d.total + adjustment;
+      return { dept: d.dept, avg: Math.round(adjustedTotal / d.count), total: adjustedTotal, count: d.count, adjustment };
+    })
     .sort((a, b) => b.avg - a.avg)
-    .map((d, i) => ({ rank: i + 1, dept: d.dept, avg: d.avg, total: d.total, count: d.count }));
+    .map((d, i) => ({ rank: i + 1, dept: d.dept, avg: d.avg, total: d.total, count: d.count, adjustment: d.adjustment }));
 }
 
 // ---------------------------------------------------------------------------
@@ -196,8 +201,8 @@ function adminView() {
   const activePeriod = state.activePeriodId ? state.periods.find(p => p.id === state.activePeriodId) : null;
   const periodTotal = activePeriod ? activePeriod.questionIds.length : 0;
   // 出題中/発表中はロースター一覧を描画しないので players を省いてホットパスのペイロードを軽くする。
-  // ロースターを見せる lobby/ranking/finished だけ含め、それも先頭80件に制限する。
-  const showRoster = state.phase === 'lobby' || state.phase === 'ranking' || state.phase === 'finished';
+  // ロースターを見せる lobby/ranking/finished/award だけ含め、それも先頭80件に制限する。
+  const showRoster = state.phase === 'lobby' || state.phase === 'ranking' || state.phase === 'finished' || state.phase === 'award';
   const players = showRoster
     ? Object.values(state.players).map((p) => ({
         name: p.name, dept: p.dept || '', score: p.score, connected: connected.has(p.id),
@@ -229,6 +234,7 @@ function adminView() {
     ranking: rankingList(),
     deptRanking: deptRankingList(),
     emergencyMode: state.emergencyMode,
+    awardStep: state.awardStep || -1,
   };
 }
 
@@ -381,10 +387,7 @@ function scoreCurrent() {
       a.matchCount = match;
       a.correct = match === k;
       const base = q.points || 100;
-      if (match === 0) a.points = 0;
-      else if (match === 1) a.points = Math.round(base * 0.1);
-      else if (match === 2) a.points = Math.round(base * 0.3);
-      else a.points = base;
+      a.points = match === 0 ? 0 : Math.round(base * match / k);
       if (state.players[pid]) {
         state.players[pid].score += a.points;
         if (a.at) state.players[pid].totalAnswerMs = (state.players[pid].totalAnswerMs || 0) + Math.max(0, a.at - (state.startedAt || a.at));
@@ -527,7 +530,6 @@ function handlePost(path, body, res) {
     }
     case '/api/admin/reveal': {
       if (state.phase !== 'question') return sendJson(res, { ok: false });
-      scoreCurrent();
       state.phase = 'stats';   // まず解答率フェーズへ
       sendJson(res, { ok: true });
       broadcastAll();
@@ -535,7 +537,8 @@ function handlePost(path, body, res) {
     }
     case '/api/admin/stats': {
       if (state.phase !== 'stats') return sendJson(res, { ok: false });
-      state.phase = 'reveal';  // 次に正解発表フェーズへ
+      scoreCurrent();
+      state.phase = 'reveal';  // 正解発表フェーズへ（スコア加算と同時）
       sendJson(res, { ok: true });
       broadcastAll();
       return;
@@ -596,6 +599,15 @@ function handlePost(path, body, res) {
       broadcastAdmins();
       return;
     }
+    case '/api/admin/adjustDeptScore': {
+      if (state.phase !== 'ranking') return sendJson(res, { ok: false, error: 'ランキング表示中のみ設定可能です' });
+      const adjustments = body.adjustments || {};
+      state.deptAdjustments = adjustments;
+      markStateDirty();
+      sendJson(res, { ok: true });
+      broadcastAll();
+      return;
+    }
     case '/api/admin/emergency': {
       state.emergencyMode = !state.emergencyMode;
       sendJson(res, { ok: true, emergencyMode: state.emergencyMode });
@@ -614,6 +626,8 @@ function handlePost(path, body, res) {
       state.activePeriodId = null;
       state.answers = {};
       state.scored = {};
+      state.deptAdjustments = {};
+      state.awardStep = -1;
       Object.values(state.players).forEach((p) => { p.score = 0; });
       sendJson(res, { ok: true });
       broadcastAll();
@@ -759,6 +773,49 @@ const server = http.createServer(async (req, res) => {
     const data = { questions: state.questions, periods: state.periods };
     res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8', 'Content-Disposition': 'attachment; filename="kanshasai-quiz-export-' + Date.now() + '.json"' });
     res.end(JSON.stringify(data, null, 2));
+    return;
+  }
+  if (req.method === 'GET' && path === '/api/admin/exportResults') {
+    const ranking = rankingList();
+    const deptRanking = deptRankingList();
+    let csv = '【台本】\n問題,Period,問題文,正解,参考情報\n';
+    state.questions.forEach((q, idx) => {
+      const period = state.periods.find(p => p.questionIds.includes(q.id))?.name || '未設定';
+      const correctAnswer = q.type === 'rentan'
+        ? (q.correctOrder || []).map(ci => (ci + 1)).join('-')
+        : ((q.correctIndex || 0) + 1);
+      const line = [
+        idx + 1,
+        '"' + (period || '').replace(/"/g, '""') + '"',
+        '"' + (q.text || '').replace(/"/g, '""') + '"',
+        correctAnswer,
+        '"' + (q.reference || '').replace(/"/g, '""') + '"'
+      ].join(',');
+      csv += line + '\n';
+    });
+    csv += '\n【個人結果】\nフルネーム,部署,得点,順位\n';
+    ranking.forEach((p, i) => {
+      const line = [
+        '"' + (p.name || '').replace(/"/g, '""') + '"',
+        '"' + (p.dept || '').replace(/"/g, '""') + '"',
+        p.score,
+        i + 1
+      ].join(',');
+      csv += line + '\n';
+    });
+    csv += '\n【部別結果】\n部署,参加人数,合計得点,平均得点,順位\n';
+    deptRanking.forEach((d, i) => {
+      const line = [
+        '"' + (d.dept || '').replace(/"/g, '""') + '"',
+        d.count,
+        d.total,
+        d.avg,
+        i + 1
+      ].join(',');
+      csv += line + '\n';
+    });
+    res.writeHead(200, { 'Content-Type': 'text/csv; charset=utf-8', 'Content-Disposition': 'attachment; filename="kanshasai-quiz-results-' + Date.now() + '.csv"' });
+    res.end(csv);
     return;
   }
   if (req.method === 'POST') {
@@ -970,12 +1027,6 @@ function render(v){
   }
   else if(v.phase==='ranking') renderRanking(v);
   else if(v.phase==='finished') renderRanking(v, true);
-  // どの画面にも簡易版への切替リンクを追加
-  var _ep='/emergency?id='+encodeURIComponent(S.id||'')+'&name='+encodeURIComponent(S.name||'')+'&dept='+encodeURIComponent(S.dept||'');
-  var _lnk=document.createElement('div');
-  _lnk.style.cssText='text-align:right;margin-top:10px;padding-bottom:8px';
-  _lnk.innerHTML='<a href="'+_ep+'" style="font-size:11px;color:rgba(148,163,184,.45);text-decoration:none">⚡ 画面を軽くする</a>';
-  app.appendChild(_lnk);
 }
 
 function renderLobby(v){
@@ -1361,6 +1412,7 @@ const ADMIN_HTML = `<!DOCTYPE html>
           </div>
         </div>
         <textarea id="qintro" rows="2" placeholder="前振り（アイドリング）例：このコンサル本部感謝祭では400人を超える皆様にご参加いただきました。では、" class="w-full border rounded-lg p-3 mb-3 outline-none focus:ring-2 ring-blue-400 text-sm text-slate-600 resize-none" style="border-style:dashed"></textarea>
+        <textarea id="qreference" rows="1" placeholder="参考情報（正解発表時に司会者が読むセリフ・背景説明 — 管理者のみ表示）" class="w-full border rounded-lg p-3 mb-3 outline-none focus:ring-2 ring-green-400 text-sm text-slate-600 resize-none" style="border-style:dashed;background-color:#f0fdf4"></textarea>
         <div class="flex items-center gap-2 mb-3 flex-wrap">
           <span class="text-sm text-slate-600 font-bold">形式:</span>
           <button id="qtypeSingle" onclick="setQType('single')" class="px-3 py-1.5 rounded-lg text-sm font-bold border-2 border-amber-400 bg-amber-50 text-amber-700">単択</button>
@@ -1420,6 +1472,32 @@ const ADMIN_HTML = `<!DOCTYPE html>
   </div>
 </div>
 
+<!-- 部署別加減点モーダル -->
+<div id="deptAdjustModal" class="hidden fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
+  <div class="bg-white rounded-2xl shadow-2xl p-6 w-full max-w-xl max-h-[90vh] overflow-auto">
+    <h3 class="font-bold text-lg mb-4">🎯 部署別加減点</h3>
+    <div id="deptAdjustContent" class="space-y-3"></div>
+    <div class="flex gap-2 mt-4">
+      <button onclick="submitDeptAdjust()" class="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-2 rounded-lg">確認</button>
+      <button onclick="closeDeptAdjustModal()" class="flex-1 bg-slate-300 hover:bg-slate-400 text-slate-700 font-bold py-2 rounded-lg">キャンセル</button>
+    </div>
+    <div id="deptAdjustMsg" class="text-sm text-red-500 mt-2"></div>
+  </div>
+</div>
+
+<!-- 答え変更モーダル -->
+<div id="changeAnswerModal" class="hidden fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
+  <div class="bg-white rounded-2xl shadow-2xl p-6 w-full max-w-lg">
+    <h3 class="font-bold text-lg mb-4">⚡ 答えを変更</h3>
+    <div id="changeAnswerContent" class="space-y-3"></div>
+    <div class="flex gap-2 mt-4">
+      <button onclick="submitChangeAnswer()" class="flex-1 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 rounded-lg">送信</button>
+      <button onclick="closeChangeAnswerModal()" class="flex-1 bg-slate-300 hover:bg-slate-400 text-slate-700 font-bold py-2 rounded-lg">キャンセル</button>
+    </div>
+    <div id="changeAnswerMsg" class="text-sm text-red-500 mt-2"></div>
+  </div>
+</div>
+
 <!-- 問題編集モーダル -->
 <div id="editModal" class="hidden fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
   <div class="bg-white rounded-2xl shadow-2xl p-6 w-full max-w-2xl max-h-[90vh] overflow-auto">
@@ -1435,6 +1513,7 @@ const ADMIN_HTML = `<!DOCTYPE html>
       </div>
     </div>
     <textarea id="eqintro" rows="2" placeholder="前振り（アイドリング）— 任意" class="w-full border rounded-lg p-3 mb-3 outline-none focus:ring-2 ring-blue-400 text-sm text-slate-600 resize-none" style="border-style:dashed"></textarea>
+    <textarea id="eqreference" rows="1" placeholder="参考情報（正解発表時に司会者が読むセリフ）" class="w-full border rounded-lg p-3 mb-3 outline-none focus:ring-2 ring-green-400 text-sm text-slate-600 resize-none" style="border-style:dashed;background-color:#f0fdf4"></textarea>
     <div class="flex items-center gap-2 mb-3 flex-wrap">
       <span class="text-sm text-slate-600 font-bold">形式:</span>
       <button id="eqtypeSingle" onclick="setEQType('single')" class="px-3 py-1.5 rounded-lg text-sm font-bold border-2 border-amber-400 bg-amber-50 text-amber-700">単択</button>
@@ -1617,7 +1696,8 @@ function addQuestion(){
   var msg=document.getElementById('addMsg'); msg.textContent='';
   if(!text||filled.length<2){ msg.textContent='問題文・選択肢2つ以上が必要です'; return; }
   var intro=(document.getElementById('qintro')||{}).value||''; intro=intro.trim();
-  var payload={text:text,img:addQuestionImg||null,intro:intro||null,choices:filled,timeLimit:tl,points:pts,type:QTYPE};
+  var reference=(document.getElementById('qreference')||{}).value||''; reference=reference.trim();
+  var payload={text:text,img:addQuestionImg||null,intro:intro||null,reference:reference||null,choices:filled,timeLimit:tl,points:pts,type:QTYPE};
   if(QTYPE==='rentan'){
     // Build correctOrder mapping from filled-choices indices to original indices
     var filledIdxMap=[];
@@ -1638,11 +1718,76 @@ function addQuestion(){
     payload.correctIndex=mapped;
   }
   post('/api/admin/addQuestion',payload).then(function(r){
-    if(r.ok){ document.getElementById('qtext').value=''; var qi=document.getElementById('qintro'); if(qi) qi.value=''; clearQImg(); buildChoiceRows(); document.getElementById('qtext').focus(); }
+    if(r.ok){ document.getElementById('qtext').value=''; var qi=document.getElementById('qintro'); if(qi) qi.value=''; var qr=document.getElementById('qreference'); if(qr) qr.value=''; clearQImg(); buildChoiceRows(); document.getElementById('qtext').focus(); }
     else msg.textContent=r.error||'追加できませんでした';
   });
 }
 function delQuestion(id){ post('/api/admin/deleteQuestion',{id:id}).then(function(r){ if(!r.ok && r.error) alert(r.error); }); }
+
+function showDeptAdjustModal(v){
+  var content='<p class="text-sm text-slate-600 mb-3">各部署に対して加減点を入力してください（現在のスコアに加算されます）</p>';
+  var depts=(v.deptRanking||[]);
+  if(depts.length===0){ content+='<div class="text-slate-400 text-sm">部署データがありません</div>'; }
+  for(var i=0;i<depts.length;i++){
+    var d=depts[i];
+    content+='<div class="flex items-center gap-2 mb-2"><label class="text-sm font-bold flex-1">'+esc(d.dept)+'</label>'
+      +'<input type="number" class="deptAdj-'+i+'" value="0" class="w-24 border rounded-lg p-2 text-center" /></div>';
+  }
+  document.getElementById('deptAdjustContent').innerHTML=content;
+  document.getElementById('deptAdjustModal').classList.remove('hidden');
+}
+function closeDeptAdjustModal(){ document.getElementById('deptAdjustModal').classList.add('hidden'); }
+function submitDeptAdjust(){
+  var depts=(V.deptRanking||[]);
+  var adjustments={};
+  for(var i=0;i<depts.length;i++){
+    var input=document.querySelector('.deptAdj-'+i);
+    if(input){ adjustments[depts[i].dept]=Number(input.value)||0; }
+  }
+  post('/api/admin/adjustDeptScore',{adjustments:adjustments}).then(function(r){
+    if(r.ok){ closeDeptAdjustModal(); } else { document.getElementById('deptAdjustMsg').textContent=r.error||'更新できませんでした'; }
+  });
+}
+
+function showChangeAnswerModal(){
+  var q=V.current; if(!q||V.phase!=='question') return alert('出題中のみ利用可能です');
+  var content='<p class="text-sm text-slate-600 mb-3">第'+(q.index+1)+'問の答えを変更します：</p>';
+  if(q.type==='rentan'){
+    content+='<p class="text-sm font-bold mb-2">順位を入力（カンマ区切り）:</p>';
+    var currentOrder=(q.correctOrder||[]).map(function(i){return (i+1);}).join(',');
+    content+='<input type="text" id="caOrderInput" placeholder="例: 1,3,2" value="'+currentOrder+'" class="w-full border rounded-lg p-2 mb-2" />';
+  } else {
+    content+='<p class="text-sm font-bold mb-2">正解の選択肢番号を選択:</p>';
+    for(var i=0;i<q.choices.length;i++){
+      var isC=(i===q.correctIndex);
+      content+='<label class="block p-2 mb-2 border rounded-lg cursor-pointer '+(isC?'bg-amber-50 border-amber-300':'bg-slate-50 border-slate-300')+'">'
+        +'<input type="radio" name="caCorrect" value="'+i+'" '+(isC?'checked':'')+ ' class="mr-2" /> '
+        +'<span class="font-bold">'+(i+1)+'</span> - '+esc(q.choices[i].text||q.choices[i])+'</label>';
+    }
+  }
+  document.getElementById('changeAnswerContent').innerHTML=content;
+  document.getElementById('changeAnswerModal').classList.remove('hidden');
+}
+function closeChangeAnswerModal(){ document.getElementById('changeAnswerModal').classList.add('hidden'); }
+function submitChangeAnswer(){
+  var q=V.current; if(!q) return;
+  var payload={correctIndex:undefined,correctOrder:undefined};
+  var msg=document.getElementById('changeAnswerMsg'); msg.textContent='';
+  if(q.type==='rentan'){
+    var orderStr=(document.getElementById('caOrderInput')||{}).value||'';
+    var order=orderStr.split(',').map(function(s){return Number(s.trim())-1;});
+    if(order.length<(q.rankCount||3)||order.some(function(i){return i<0||i>=q.choices.length;})){
+      msg.textContent='無効な順序です'; return;
+    }
+    payload.correctOrder=order;
+  } else {
+    var cr=document.querySelector('input[name=caCorrect]:checked');
+    payload.correctIndex=cr?Number(cr.value):0;
+  }
+  post('/api/admin/updateQuestionAnswer',payload).then(function(r){
+    if(r.ok){ closeChangeAnswerModal(); } else { msg.textContent=r.error||'更新できませんでした'; }
+  });
+}
 
 // コントロールボタン（フェーズに応じて出し分け）
 function renderControls(v){
@@ -1679,9 +1824,14 @@ function renderControls(v){
           'col-span-2 bg-emerald-600 hover:bg-emerald-700');
       }
     });
+    h+=btn('🎯 部署別加減点','showDeptAdjustModal(V)','col-span-2 bg-blue-600 hover:bg-blue-700 mt-1');
+    h+=btn('🎖️ 表彰式を開始','post(\\'/api/admin/award\\')','col-span-2 bg-purple-600 hover:bg-purple-700 mt-1');
+    h+=btn('🏁 終了する','post(\\'/api/admin/finish\\')','col-span-2 bg-slate-500 hover:bg-slate-600 mt-1');
+  } else if(v.phase==='award'){
     h+=btn('🏁 終了する','post(\\'/api/admin/finish\\')','col-span-2 bg-slate-500 hover:bg-slate-600 mt-1');
   } else if(v.phase==='finished'){
-    h+=btn('🔄 もう一度（リセット）','post(\\'/api/admin/reset\\')','col-span-2 bg-slate-600 hover:bg-slate-700');
+    h+=btn('📥 結果をCSVダウンロード','window.location.href=\\'/api/admin/exportResults\\'','col-span-2 bg-green-600 hover:bg-green-700');
+    h+=btn('🔄 もう一度（リセット）','post(\\'/api/admin/reset\\')','col-span-2 bg-slate-600 hover:bg-slate-700 mt-1');
   }
   if(v.phase!=='lobby' && v.phase!=='finished') h+=btn('リセット','if(confirm(\\'ゲームを最初に戻します。よろしいですか？\\'))post(\\'/api/admin/reset\\')','col-span-2 bg-slate-400 hover:bg-slate-500 mt-1');
   var emLabel=v.emergencyMode?'🆘 簡易版モード: ON（解除する）':'🆘 簡易版モードに切替';
@@ -1854,6 +2004,10 @@ function makeScript(pid){
       var ci2=(q.correctIndex||0); ans='正解は 「'+xe(ctxt(q.choices[ci2]))+'」 でした';
     }
     row('line','shima',ans);
+    if(q.reference){
+      row('dir','','（参考情報）');
+      row('line','both',xe(q.reference));
+    }
   });
   var html='<!DOCTYPE html><html lang="ja"><head><meta charset="utf-8"><title>台本 — '+pname+'</title>'
     +'<style>'
@@ -1928,7 +2082,9 @@ function renderMonitor(v){
       + (reveal? '<span class="text-emerald-300 font-black text-xl">'+(v.phase==='stats'?'📊 解答率':'✅ 正解発表')+'</span>' : '<div id="mtimer" class="timer-ball timer-lg">--</div>')+'</div>'
       + '<div class="q-frame mb-4"><div class="q-badge">Q</div><div class="q-pill flex-1 text-2xl min-h-[64px]">'+esc(q.text)+'</div></div>'
       + '<div class="grid grid-cols-1 gap-2">'+choices+'</div>'
-      + '<div class="text-right text-cyan-100/70 text-sm mt-3">回答: '+q.answeredCount+' / '+v.joinCount+' 人</div>';
+      + '<div class="text-right text-cyan-100/70 text-sm mt-3">回答: '+q.answeredCount+' / '+v.joinCount+' 人</div>'
+      + (q.reference?'<div class="text-cyan-100/60 text-sm mt-2 pt-2 border-t border-white/20">📝 '+esc(q.reference)+'</div>':'')
+      + (!reveal?'<div class="mt-4 pt-3 border-t border-white/20"><button onclick="showChangeAnswerModal()" class="bg-blue-500 hover:bg-blue-600 text-white font-bold px-4 py-2 rounded-lg text-sm">⚡ 答えを変更</button></div>':'');
     if(!reveal){
       var end=Date.now()+q.remainingMs;
       timer=setInterval(function(){
@@ -1938,6 +2094,50 @@ function renderMonitor(v){
         if(rem<=0) clearInterval(timer);
       },150);
     }
+    return;
+  }
+  // award ceremony
+  if(v.phase==='award'){
+    var stepLabels=['🏅 100-81位','🏅 80-61位','🏅 60-41位','🏅 40-21位','🏅 6-20位','🏅 5位','🏅 4位','🏅 3位','🏅 2位','🏅 1位','🏢 部3位','🏢 部2位','🏢 部1位'];
+    var step=v.awardStep||0;
+    var award='<div class="text-center"><div class="text-6xl mb-2">🎖️</div><div class="text-3xl font-black mb-4" style="text-shadow:0 0 14px rgba(120,220,255,.6)">表彰式</div>';
+    if(step>=0 && step<=4){
+      var ranks=[{label:'100-81位',range:[81,100]},{label:'80-61位',range:[61,80]},{label:'60-41位',range:[41,60]},{label:'40-21位',range:[21,40]},{label:'6-20位',range:[6,20]}];
+      var r=ranks[step];
+      award+='<div class="text-2xl font-bold text-amber-300 mb-4">'+r.label+'</div><div class="grid grid-cols-1 gap-2 max-h-[300px] overflow-auto">';
+      for(var i=0;i<(v.ranking||[]).length;i++){
+        var p=v.ranking[i]; var rank=i+1;
+        if(rank>=r.range[0] && rank<=r.range[1]){
+          award+='<div class="flex items-center gap-3 rounded-xl p-3 panel-row"><span class="w-8 text-center font-black">#'+rank+'</span>'
+            +'<div class="flex-1 min-w-0"><div class="font-bold truncate">'+esc(p.name)+'</div>'+(p.dept?'<div class="text-xs opacity-60">'+esc(p.dept)+'</div>':'')+'</div>'
+            +'<span class="font-black">'+p.score+'pt</span></div>';
+        }
+      }
+      award+='</div>';
+    } else if(step>=5 && step<=9){
+      var isteps=[5,4,3,2,1]; var irank=isteps[step-5];
+      var medals=['🥇','🥈','🥉'];
+      award+='<div class="text-2xl font-bold text-amber-300 mb-4">#'+irank+'位</div>';
+      var p=(v.ranking||[])[irank-1];
+      if(p){
+        var medalIdx=irank===1?0:(irank===2?1:2);
+        award+='<div class="flex items-center justify-center gap-4 mt-4"><span class="text-6xl">'+medals[medalIdx]+'</span>'
+          +'<div><div class="text-4xl font-black text-amber-300">'+esc(p.name)+'</div>'
+          +'<div class="text-lg text-cyan-200">'+(p.dept||'')+' · '+p.score+'pt</div></div></div>';
+      }
+    } else if(step>=10 && step<=12){
+      var dsteps=[{label:'1位',idx:0},{label:'2位',idx:1},{label:'3位',idx:2}]; var ds=dsteps[step-10];
+      award+='<div class="text-2xl font-bold text-amber-300 mb-4">部別'+ds.label+'</div>';
+      var drank=(v.deptRanking||[])[ds.idx];
+      if(drank){
+        award+='<div class="flex items-center justify-center gap-4 mt-4"><span class="text-6xl">'+['🥉','🥈','🥇'][ds.idx]+'</span>'
+          +'<div><div class="text-4xl font-black text-amber-300">'+esc(drank.dept)+'</div>'
+          +'<div class="text-lg text-cyan-200">'+drank.count+'人 · 合計 '+drank.total+'pt</div></div></div>';
+      }
+    }
+    award+='</div><div class="mt-4 pt-3 border-t border-white/20"><button onclick="post(\\'/api/admin/nextAward\\',{}).then(function(){});" class="w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 rounded-lg">次へ</button></div>';
+    if(step<stepLabels.length-1) award+='<div class="text-center text-sm text-cyan-200 mt-2">'+stepLabels[step]+' → '+stepLabels[step+1]+'</div>';
+    m.innerHTML=award;
     return;
   }
   // ranking / finished
@@ -1964,11 +2164,14 @@ function renderMonitor(v){
     var dlist=v.deptRanking||[]; var drows='';
     for(var i=0;i<dlist.length;i++){
       var d=dlist[i];
+      var baseAvg=d.adjustment?Math.round(d.avg - d.adjustment / d.count):d.avg;
+      var avgText=d.avg+'<span class="text-xs font-normal text-white/60"> pt/人</span>';
+      if(d.adjustment) avgText+='<div class="text-xs text-cyan-300 mt-1">('+baseAvg+'pt + '+Math.round(d.adjustment/d.count)+'pt加点)</div>';
       drows+='<div class="flex items-center gap-3 rounded-xl p-3 '+(i<3?'gold-row':'panel-row')+'">'
         +'<span class="w-8 text-center font-black text-lg shrink-0">'+(i<3?medal[i]:(i+1))+'</span>'
         +'<div class="flex-1 min-w-0"><div class="font-bold truncate">'+esc(d.dept)+'</div>'
         +'<div class="text-xs opacity-70">'+d.count+'人 · 合計 '+d.total+'pt</div></div>'
-        +'<div class="text-right shrink-0 font-black tabular-nums text-amber-300">'+d.avg+'<span class="text-xs font-normal text-white/60"> pt/人</span></div></div>';
+        +'<div class="text-right shrink-0 font-black tabular-nums text-amber-300">'+avgText+'</div></div>';
     }
     acontent='<div class="grid grid-cols-1 gap-2">'+(drows||'<div class="text-cyan-100/60 text-center">データなし</div>')+'</div>';
   }
@@ -2123,6 +2326,7 @@ function openEdit(qid){
   document.getElementById('editRentanHint').classList.toggle('hidden',EDIT_QTYPE!=='rentan');
   document.getElementById('eqtext').value=q.text;
   var eqintroEl=document.getElementById('eqintro'); if(eqintroEl) eqintroEl.value=q.intro||'';
+  var eqrefEl=document.getElementById('eqreference'); if(eqrefEl) eqrefEl.value=q.reference||'';
   editQuestionImg=q.img||null;
   document.getElementById('eqimgprev').src=editQuestionImg||'';
   document.getElementById('eqimgthumb').classList.toggle('hidden',!editQuestionImg);
@@ -2220,7 +2424,8 @@ function saveEdit(){
   var msg=document.getElementById('editMsg'); msg.textContent='';
   if(!text||filled.length<2){ msg.textContent='問題文・選択肢2つ以上が必要です'; return; }
   var eintro=(document.getElementById('eqintro')||{}).value||''; eintro=eintro.trim();
-  var payload={id:editId,text:text,img:editQuestionImg||null,intro:eintro||null,choices:filled,timeLimit:tl,points:pts,type:EDIT_QTYPE};
+  var ereference=(document.getElementById('eqreference')||{}).value||''; ereference=ereference.trim();
+  var payload={id:editId,text:text,img:editQuestionImg||null,intro:eintro||null,reference:ereference||null,choices:filled,timeLimit:tl,points:pts,type:EDIT_QTYPE};
   if(EDIT_QTYPE==='rentan'){
     var filledIdxMap=[];
     for(var j=0;j<choices.length;j++) if(choices[j].text.length>0||choices[j].img) filledIdxMap.push(j);
@@ -2293,7 +2498,7 @@ const PRESENT_HTML = `<!DOCTYPE html>
   </div>
 </div>
 <div id="app"></div>
-<div id="floatQR" style="position:fixed;top:16px;right:16px;z-index:20;background:white;border-radius:14px;padding:10px 10px 6px;display:none;box-shadow:0 4px 20px rgba(0,0,0,.5)">
+<div id="floatQR" style="position:fixed;top:16px;left:16px;z-index:20;background:white;border-radius:14px;padding:10px 10px 6px;display:none;box-shadow:0 4px 20px rgba(0,0,0,.5)">
   <div id="floatQRcode"></div>
   <div style="text-align:center;font-size:12px;color:#334155;margin-top:4px;font-weight:700">参加はこちら ↑</div>
 </div>
@@ -2339,6 +2544,7 @@ function render(v){
     else drawReveal(v);
   }
   else if(ph==='ranking'||ph==='finished'){showFloatQR(true);drawRanking(v,ph==='finished');}
+  else if(ph==='award'){showFloatQR(false);drawAward(v);}
 }
 var NC=['n1','n2','n3','n4','n5','n6','n7','n8','n9','n10'];
 function drawLobby(v){
@@ -2440,6 +2646,7 @@ function drawReveal(v){
     '<div style="width:96vw;position:relative;z-index:10">'
     +'<div style="text-align:center;font-size:3.5vw;font-weight:900;color:#4ade80;text-shadow:0 0 22px rgba(74,222,128,.8);margin-bottom:2.5vh">正解は… 「'+esc(ct(q.choices[q.correctIndex]))+'」！</div>'
     +(cols===2?'<div style="display:grid;grid-template-columns:1fr 1fr;gap:0 2vw"><div>'+col1+'</div><div>'+col2+'</div></div>':'<div>'+rows+'</div>')
+    +(q.reference?'<div style="text-align:center;font-size:2.2vw;color:#a7f3d0;margin-top:3vh;padding:2vh;border-top:2px solid rgba(167,243,208,.3)">📝 '+esc(q.reference)+'</div>':'')
     +'</div>';
 }
 function drawRentanReveal(v){
@@ -2460,6 +2667,7 @@ function drawRentanReveal(v){
     '<div style="width:96vw;position:relative;z-index:10">'
     +'<div style="text-align:center;font-size:3.5vw;font-weight:900;color:#4ade80;text-shadow:0 0 22px rgba(74,222,128,.8);margin-bottom:2.5vh">正解順序 発表！</div>'
     +'<div>'+answerRows+'</div>'
+    +(q.reference?'<div style="text-align:center;font-size:2.2vw;color:#a7f3d0;margin-top:3vh;padding:2vh;border-top:2px solid rgba(167,243,208,.3)">📝 '+esc(q.reference)+'</div>':'')
     +'</div>';
 }
 function drawRentanStats(v){
@@ -2509,6 +2717,55 @@ function drawRanking(v,isFinal){
     +'<div><div style="font-size:1.8vw;font-weight:700;color:#9ac8ff;border-left:4px solid #4fb8ff;padding-left:1.2vw;margin-bottom:1.5vh">部対抗ランキング</div>'+drows+'</div>'
     +'<div><div style="font-size:1.8vw;font-weight:700;color:#9ac8ff;border-left:4px solid #ffe07a;padding-left:1.2vw;margin-bottom:1.5vh">個人TOP8</div>'+prows+'</div>'
     +'</div></div>';
+}
+function drawAward(v){
+  clearInterval(timerIv);
+  var step=v.awardStep||0;
+  var medals=['🥇','🥈','🥉'];
+  var app='<div style="width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;z-index:10;padding:4vh 5vw;text-align:center">';
+  if(step>=0 && step<=4){
+    var ranks=[{label:'100-81位',range:[81,100]},{label:'80-61位',range:[61,80]},{label:'60-41位',range:[41,60]},{label:'40-21位',range:[21,40]},{label:'6-20位',range:[6,20]}];
+    var r=ranks[step];
+    app+='<div style="font-size:5vw;font-weight:900;color:#ffe07a;margin-bottom:3vh;text-shadow:0 0 28px rgba(255,220,100,.8)">🏅 '+r.label+'</div>';
+    app+='<div style="width:90vw;max-height:70vh;overflow-y:auto;display:grid;gap:1.2vh">';
+    for(var i=0;i<(v.ranking||[]).length;i++){
+      var p=v.ranking[i]; var rank=i+1;
+      if(rank>=r.range[0] && rank<=r.range[1]){
+        app+='<div class="rank-in" style="display:flex;align-items:center;gap:1.4vw;padding:1.2vh 1.8vw;border-radius:12px;background:rgba(255,255,255,.09);color:#eaf2ff;border:1px solid rgba(255,255,255,.14);animation-delay:'+(rank*.05)+'s">'
+          +'<span style="font-size:2vw;width:4vw;text-align:center;font-weight:900">#'+rank+'</span>'
+          +'<span style="flex:1;font-size:2vw;font-weight:700;text-align:left">'+esc(p.name)+'</span>'
+          +'<span style="font-size:1.8vw;font-weight:900;color:#fbbf24">'+p.score+'pt</span>'
+          +'</div>';
+      }
+    }
+    app+='</div>';
+  } else if(step>=5 && step<=9){
+    var isteps=[5,4,3,2,1]; var irank=isteps[step-5];
+    var p=(v.ranking||[])[irank-1];
+    var medalIdx={5:2,4:2,3:2,2:1,1:0}[irank]||2;
+    app+='<div style="font-size:4vw;margin-bottom:3vh">'+medals[medalIdx]+'</div>';
+    app+='<div style="font-size:3vw;font-weight:900;color:#ffe07a;margin-bottom:2vh">第 '+irank+' 位</div>';
+    if(p){
+      app+='<div style="font-size:3vw;font-weight:700;margin-bottom:1vh">'+esc(p.name)+'</div>';
+      app+='<div style="font-size:2vw;color:#9ac8ff;margin-bottom:2vh">'+esc(p.dept||'')+'</div>';
+      app+='<div style="font-size:2.8vw;font-weight:900;color:#fbbf24">'+p.score+'pt</div>';
+    }
+  } else if(step>=10 && step<=12){
+    var dsteps=[{label:'1位',idx:0},{label:'2位',idx:1},{label:'3位',idx:2}]; var ds=dsteps[step-10];
+    var drank=(v.deptRanking||[])[ds.idx];
+    app+='<div style="font-size:4vw;margin-bottom:3vh">'+medals[ds.idx]+'</div>';
+    app+='<div style="font-size:3vw;font-weight:900;color:#ffe07a;margin-bottom:2vh">部別 '+ds.label+'</div>';
+    if(drank){
+      var baseAvg=drank.adjustment?Math.round(drank.avg - drank.adjustment / drank.count):drank.avg;
+      var adjPerPerson=drank.adjustment?Math.round(drank.adjustment/drank.count):0;
+      app+='<div style="font-size:3vw;font-weight:700;margin-bottom:1vh">'+esc(drank.dept)+'</div>';
+      app+='<div style="font-size:2vw;color:#9ac8ff;margin-bottom:1vh">'+drank.count+'人 · 合計 '+drank.total+'pt</div>';
+      app+='<div style="font-size:2.4vw;font-weight:900;color:#fbbf24">'+drank.avg+'点/人</div>';
+      if(drank.adjustment) app+='<div style="font-size:1.6vw;color:#a7f3d0;margin-top:1vh">（'+baseAvg+'点 + '+adjPerPerson+'点加点）</div>';
+    }
+  }
+  app+='</div>';
+  document.getElementById('app').innerHTML=app;
 }
 function startTimer(ms,totalMs){
   clearInterval(timerIv);

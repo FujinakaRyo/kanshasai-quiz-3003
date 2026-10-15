@@ -1,300 +1,36 @@
 {
   "questions": [
     {
-      "id": "1d475751-3461-4676-8be5-331a37245142",
-      "text": "大手町は東京メトロ乗降者数2位の駅。では3位は？",
+      "id": "p1_q1",
+      "text": "本家のTBSオールスター感謝祭として正しいのは？",
       "choices": [
         {
-          "text": "銀座",
+          "text": "優勝賞金1000万円",
           "img": null
         },
         {
-          "text": "新橋",
+          "text": "名物コーナー「赤坂2丁目ミニマラソン」",
           "img": null
         },
         {
-          "text": "豊洲",
+          "text": "現在放送80回",
           "img": null
         },
         {
-          "text": "北千住",
+          "text": "番組開始当時島崎和歌子さんは18歳",
           "img": null
         }
       ],
       "type": "single",
       "correctIndex": 3,
       "timeLimit": 20,
-      "points": 10
-    },
-    {
-      "id": "bbb43ee1-1fed-4405-a354-65895103bab8",
-      "text": "NRIの新卒採用サイトに掲載されている「NRIを表す10のキーワード」に含まれていないものは？",
-      "choices": [
-        {
-          "text": "盤石な顧客基盤",
-          "img": null
-        },
-        {
-          "text": "共創する知",
-          "img": null
-        },
-        {
-          "text": "先見力",
-          "img": null
-        },
-        {
-          "text": "3：7",
-          "img": null
-        }
-      ],
-      "type": "single",
-      "correctIndex": 1,
-      "timeLimit": 20,
-      "points": 10
-    },
-    {
-      "id": "5a2ae2c9-a393-458e-9d1b-50fd29e96afa",
-      "text": "2026年度に新卒入社（第二新卒も含む）した本部の新人は何人？",
-      "choices": [
-        {
-          "text": "60人",
-          "img": null
-        },
-        {
-          "text": "75人",
-          "img": null
-        },
-        {
-          "text": "85人",
-          "img": null
-        },
-        {
-          "text": "100人",
-          "img": null
-        }
-      ],
-      "type": "single",
-      "correctIndex": 2,
-      "timeLimit": 20,
-      "points": 10
-    },
-    {
-      "id": "8b3061fd-7312-45d2-aefd-dfefae3fd391",
-      "text": "最も「高い」のはどれ",
-      "choices": [
-        {
-          "text": "歴代紅白歌合戦の最高視聴率",
-          "img": null
-        },
-        {
-          "text": "2026年現在のNRIの有給休暇取得率",
-          "img": null
-        },
-        {
-          "text": "2026年度東京大学文一共通テスト足切りの得点率",
-          "img": null
-        },
-        {
-          "text": "コンサル本部CAITO月間利用率（2026年8月、CAITOを一度でも使ったユーザーの率）",
-          "img": null
-        }
-      ],
-      "type": "single",
-      "correctIndex": 0,
-      "timeLimit": 20,
       "points": 10,
       "img": null,
-      "intro": null
+      "intro": "本企画は「コンサル本部大感謝祭」と銘打っており、形式/音楽も本家「TBSオールスター感謝祭」に似せて企画しています。では、",
+      "reference": "【参考】優勝賞金は100万円、名物コーナーは「赤坂５丁目ミニマラソン」、現在放送「70回」"
     },
     {
-      "id": "8e0071d8-9f3f-41fb-b36b-b313ca5a252d",
-      "text": "最も「高い」のはどれ",
-      "choices": [
-        {
-          "text": "東京サンケイビル",
-          "img": null
-        },
-        {
-          "text": "大手町フィナンシャルシティ グランキューブ（GC）",
-          "img": null
-        },
-        {
-          "text": "横浜野村ビル（MM）",
-          "img": null
-        }
-      ],
-      "type": "rentan",
-      "timeLimit": 10,
-      "points": 10,
-      "img": null,
-      "intro": null,
-      "correctOrder": [
-        1,
-        0,
-        2
-      ],
-      "rankCount": 3
-    },
-    {
-      "id": "b49d2b8e-c684-415f-8d38-0cfa8e2466c4",
-      "text": "長いのはどっち",
-      "choices": [
-        {
-          "text": "○○さんの足のサイズ",
-          "img": null
-        },
-        {
-          "text": "カエル箱の「よこ」の長さ",
-          "img": null
-        }
-      ],
-      "type": "single",
-      "correctIndex": 1,
-      "timeLimit": 20,
-      "points": 10
-    },
-    {
-      "id": "5827a956-cbb3-45e7-aa33-03e7961cfab3",
-      "text": "大手町グランキューブの高さは？",
-      "choices": [
-        {
-          "text": "174.120m",
-          "img": null
-        },
-        {
-          "text": "168.280m",
-          "img": null
-        },
-        {
-          "text": "162.440m",
-          "img": null
-        },
-        {
-          "text": "156.580m",
-          "img": null
-        }
-      ],
-      "type": "single",
-      "correctIndex": 1,
-      "timeLimit": 20,
-      "points": 10
-    },
-    {
-      "id": "c92c5be7-4c3f-4be5-97ab-55f46ce04733",
-      "text": "コンサル本部で現在最も多い名前は？",
-      "choices": [
-        {
-          "text": "Yuki",
-          "img": null
-        },
-        {
-          "text": "Kota",
-          "img": null
-        },
-        {
-          "text": "Ryo",
-          "img": null
-        },
-        {
-          "text": "Ryota",
-          "img": null
-        }
-      ],
-      "type": "single",
-      "correctIndex": 2,
-      "timeLimit": 20,
-      "points": 10
-    },
-    {
-      "id": "5b106af9-d7bc-4015-8acc-dd0e98e113db",
-      "text": "2016年10月時点のNRIの株価はどれ",
-      "choices": [
-        {
-          "text": "1,105円",
-          "img": null
-        },
-        {
-          "text": "2,311円",
-          "img": null
-        },
-        {
-          "text": "3,305円",
-          "img": null
-        },
-        {
-          "text": "6,030円",
-          "img": null
-        }
-      ],
-      "type": "single",
-      "correctIndex": 0,
-      "timeLimit": 20,
-      "points": 10
-    },
-    {
-      "id": "4eeff79f-36b8-4f02-9e62-0da484d9e13c",
-      "text": "起きた年が古い順に並べて",
-      "choices": [
-        {
-          "text": "（株）野村総合研究所（NRI）設立",
-          "img": null
-        },
-        {
-          "text": "後楽園スタジアム開場",
-          "img": null
-        },
-        {
-          "text": "アインシュタイン「特殊相対性理論」発表",
-          "img": null
-        },
-        {
-          "text": "セブン-イレブンの日本1号店、東京・豊洲にオープン",
-          "img": null
-        }
-      ],
-      "type": "rentan",
-      "correctOrder": [
-        2,
-        1,
-        0
-      ],
-      "rankCount": 3,
-      "timeLimit": 20,
-      "points": 10
-    },
-    {
-      "id": "4317d0aa-36f2-4a43-8941-06e58d8bd966",
-      "text": "起きた年が古い順に並べて",
-      "choices": [
-        {
-          "text": "北島康介「なんも言えねぇ」",
-          "img": null
-        },
-        {
-          "text": "北島康介「ちょーきもちいい」",
-          "img": null
-        },
-        {
-          "text": "水石さん、NRI入社",
-          "img": null
-        },
-        {
-          "text": "野村総合研究所（上海）有限公司設立",
-          "img": null
-        }
-      ],
-      "type": "rentan",
-      "correctOrder": [
-        3,
-        1,
-        2
-      ],
-      "rankCount": 3,
-      "timeLimit": 20,
-      "points": 10
-    },
-    {
-      "id": "75938c2a-a90d-4c5d-bc26-dde0b84d306f",
+      "id": "p1_q2",
       "text": "今から10年前の2016年、当時の本部レクのイベントで骨折した人は誰？",
       "choices": [
         {
@@ -319,27 +55,201 @@
       "timeLimit": 20,
       "points": 10,
       "img": null,
-      "intro": "コンサル本部レクは今年8年ぶりの開催ですが、過去は毎年開催していたコンテンツで様々なドラマがありました。"
+      "intro": "本部レクの開催は8年ぶりです。過去は若手による出し物やハードな企画もありました。では、",
+      "reference": null
     },
     {
-      "id": "549f2d67-4cda-475d-9642-e711d7f9c0b8",
-      "text": "本家のTBSオールスター感謝祭として正しいのは？",
-      "img": null,
+      "id": "p1_q3",
+      "text": "2016年10月時点のNRIの株価はどれ",
       "choices": [
         {
-          "text": "優勝賞金1000万円",
+          "text": "1,105円",
           "img": null
         },
         {
-          "text": "名物コーナー「赤坂2丁目ミニマラソン」",
+          "text": "2,311円",
           "img": null
         },
         {
-          "text": "現在放送80回",
+          "text": "3,305円",
           "img": null
         },
         {
-          "text": "番組開始当時島崎和歌子さんは18歳",
+          "text": "6,030円",
+          "img": null
+        }
+      ],
+      "type": "single",
+      "correctIndex": 0,
+      "timeLimit": 20,
+      "points": 10,
+      "img": null,
+      "intro": "同じく2016年時点。企画も様変わり（update）していますが、為替/株価も大きく変動しています。では",
+      "reference": null
+    },
+    {
+      "id": "p1_q4",
+      "text": "2026年度に新卒入社（第二新卒も含む）した本部の新人は何人？",
+      "choices": [
+        {
+          "text": "60人",
+          "img": null
+        },
+        {
+          "text": "75人",
+          "img": null
+        },
+        {
+          "text": "85人",
+          "img": null
+        },
+        {
+          "text": "100人",
+          "img": null
+        }
+      ],
+      "type": "single",
+      "correctIndex": 2,
+      "timeLimit": 20,
+      "points": 10,
+      "img": null,
+      "intro": "過去の問題が続いたので、時を現在に戻します。このコンサル本部レクにも入社間もない新人さん、第二新卒さんに参加いただいています。では、",
+      "reference": null
+    },
+    {
+      "id": "p1_q5",
+      "text": "小林本部長のご出身「古河市」はどこでしょう",
+      "choices": [
+        {
+          "text": "栃木県",
+          "img": null
+        },
+        {
+          "text": "茨城県西部",
+          "img": null
+        },
+        {
+          "text": "埼玉県",
+          "img": null
+        },
+        {
+          "text": "千葉県",
+          "img": null
+        }
+      ],
+      "type": "single",
+      "correctIndex": 1,
+      "timeLimit": 20,
+      "points": 10,
+      "img": null,
+      "intro": null,
+      "reference": null
+    },
+    {
+      "id": "p1_q6",
+      "text": "NRIの新卒採用サイトに掲載されている「NRIを表す10のキーワード」に含まれていないものは？",
+      "choices": [
+        {
+          "text": "盤石な顧客基盤",
+          "img": null
+        },
+        {
+          "text": "共創する知",
+          "img": null
+        },
+        {
+          "text": "先見力",
+          "img": null
+        },
+        {
+          "text": "3：7",
+          "img": null
+        }
+      ],
+      "type": "single",
+      "correctIndex": 1,
+      "timeLimit": 20,
+      "points": 10,
+      "img": null,
+      "intro": "そんな新人さんが見てきたであろう、弊社の新卒採用サイトの中に「NRIを表す10のキーワード」というコンテンツがあり、「Dream up the future 未来創発」を含む10のワードが掲載されています。では、",
+      "reference": "02「コンソリューション」、03「先見力」、04「Mutual Respect」、05「高品質・高付加価値」、06「技術力」、07「盤石な顧客基盤」、08「20種類以上のキャリアパス」、09「年間300講座」、10「３：７」"
+    },
+    {
+      "id": "p1_q7",
+      "text": "大手町グランキューブの高さは？",
+      "choices": [
+        {
+          "text": "174.120m",
+          "img": null
+        },
+        {
+          "text": "168.280m",
+          "img": null
+        },
+        {
+          "text": "162.440m",
+          "img": null
+        },
+        {
+          "text": "156.580m",
+          "img": null
+        }
+      ],
+      "type": "single",
+      "correctIndex": 1,
+      "timeLimit": 20,
+      "points": 10,
+      "img": null,
+      "intro": null,
+      "reference": null
+    },
+    {
+      "id": "p1_q8",
+      "text": "大手町グランキューブから物体を自由落下させると何秒で地面に着くでしょう（空気抵抗は無視）",
+      "choices": [
+        {
+          "text": "約4.2秒",
+          "img": null
+        },
+        {
+          "text": "約5.8秒",
+          "img": null
+        },
+        {
+          "text": "約6.5秒",
+          "img": null
+        },
+        {
+          "text": "約7.1秒",
+          "img": null
+        }
+      ],
+      "type": "single",
+      "correctIndex": 1,
+      "timeLimit": 20,
+      "points": 10,
+      "img": null,
+      "intro": "計算問題です。",
+      "reference": null
+    },
+    {
+      "id": "p2_q1",
+      "text": "東京メトロの乗降者数、大手町の次に多いのはどの駅？",
+      "choices": [
+        {
+          "text": "銀座",
+          "img": null
+        },
+        {
+          "text": "新橋",
+          "img": null
+        },
+        {
+          "text": "豊洲",
+          "img": null
+        },
+        {
+          "text": "北千住",
           "img": null
         }
       ],
@@ -347,13 +257,211 @@
       "correctIndex": 3,
       "timeLimit": 20,
       "points": 10,
-      "intro": "この場は「コンサル本部大感謝祭」と銘打っています。このネーミングの元ネタ、本家の「オールスター感謝祭」はつい先週にもTBSで放送されていました。では、"
+      "img": null,
+      "intro": "GCに行く際に多くの方が使われる「大手町駅」は、東京メトロ内の乗降者数第２位の駅です。１位は池袋駅ですが、では３位の駅はどこでしょう？",
+      "reference": null
     },
     {
-      "id": "67001f6c-bf7d-483d-82bd-761c0c49e94b",
-      "text": "「きのこの山」が選ばれた割合は？",
+      "id": "p2_q2",
+      "text": "コンサル本部で現在最も多い名前は？",
+      "choices": [
+        {
+          "text": "Ryo",
+          "img": null
+        },
+        {
+          "text": "Kota",
+          "img": null
+        },
+        {
+          "text": "Yuki",
+          "img": null
+        },
+        {
+          "text": "Ryota",
+          "img": null
+        }
+      ],
+      "type": "single",
+      "correctIndex": 0,
+      "timeLimit": 20,
+      "points": 10,
       "img": null,
-      "intro": "アンケートの設問、「「きのこの山」と「たけのこの里」、あなたはどちら派？」。「きのこの山」が選ばれた割合は何パーセントでしょう？",
+      "intro": "海外拠点や出向の方も含めて、現在コンサル本部に属している方は1300名を超えます。では、",
+      "reference": "【参考】Ryo15名、Yuki12名、Ryota9名、Kota9名"
+    },
+    {
+      "id": "p2_q3",
+      "text": "高い順に並べて",
+      "choices": [
+        {
+          "text": "歴代紅白歌合戦の最高視聴率",
+          "img": null
+        },
+        {
+          "text": "2026年現在のNRIの有給休暇取得率",
+          "img": null
+        },
+        {
+          "text": "2026年度東京大学文一共通テスト足切りの得点率",
+          "img": null
+        },
+        {
+          "text": "コンサル本部CAITO月間利用率（2026年8月）※月間1度以上利用したユーザー数の率",
+          "img": null
+        }
+      ],
+      "type": "rentan",
+      "timeLimit": 25,
+      "points": 10,
+      "img": null,
+      "intro": null,
+      "reference": "歴代紅白歌合戦の最高視聴率：81.4%、2024年現在のNRIの有給休暇取得率：69.2%、2026年度東京大学文一共通テスト足切りの得点率：72%、コンサル本部CAITO月間利用率（2026年8月）：92.5%",
+      "correctOrder": [
+        3,
+        0,
+        2,
+        1
+      ],
+      "rankCount": 4
+    },
+    {
+      "id": "p2_q4",
+      "text": "ここまで、最も「多かった」のはどれ",
+      "choices": [
+        {
+          "text": "①が正解だった問題数",
+          "img": null
+        },
+        {
+          "text": "②が正解だった問題数",
+          "img": null
+        },
+        {
+          "text": "③が正解だった問題数",
+          "img": null
+        },
+        {
+          "text": "④が正解だった問題数",
+          "img": null
+        }
+      ],
+      "type": "single",
+      "correctIndex": 0,
+      "timeLimit": 20,
+      "points": 10,
+      "img": null,
+      "intro": "ここまででピリオド１から含めて10問出題してきました。では、",
+      "reference": null
+    },
+    {
+      "id": "p2_q5",
+      "text": "起きた年が古い順に並べて（古いのが１位）",
+      "choices": [
+        {
+          "text": "アインシュタイン「特殊相対性理論」発表",
+          "img": null
+        },
+        {
+          "text": "後楽園スタジアム開場",
+          "img": null
+        },
+        {
+          "text": "（株）野村総合研究所（NRI）設立",
+          "img": null
+        },
+        {
+          "text": "セブン-イレブンの日本1号店、東京・豊洲にオープン",
+          "img": null
+        }
+      ],
+      "type": "rentan",
+      "correctOrder": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "rankCount": 4,
+      "timeLimit": 25,
+      "points": 10,
+      "img": null,
+      "intro": null,
+      "reference": "アインシュタイン「特殊相対性理論」発表：1905年、後楽園スタジアム開場：1937年、（株）野村総合研究所（NRI）設立：1965年、セブン-イレブンの日本1号店、東京・豊洲にオープン：1974年"
+    },
+    {
+      "id": "p2_q6",
+      "text": "起きた年が古い順に並べて（古いのが１位）",
+      "choices": [
+        {
+          "text": "野村総合研究所（上海）有限公司設立",
+          "img": null
+        },
+        {
+          "text": "水石さん、NRI入社",
+          "img": null
+        },
+        {
+          "text": "北島康介「なんも言えねぇ」",
+          "img": null
+        },
+        {
+          "text": "北島康介「ちょーきもちいい」",
+          "img": null
+        }
+      ],
+      "type": "rentan",
+      "correctOrder": [
+        0,
+        3,
+        1,
+        2
+      ],
+      "rankCount": 4,
+      "timeLimit": 25,
+      "points": 10,
+      "img": null,
+      "intro": null,
+      "reference": "野村総合研究所（上海）有限公司設立：2002年、北島康介「ちょーきもちいい」：2004年、水石さん、NRI入社：2005年、北島康介「なんも言えねぇ」：2008年"
+    },
+    {
+      "id": "p3_q1",
+      "text": "コンサル本部トレンド調査アンケート、回答率が高かった順に並べて",
+      "choices": [
+        {
+          "text": "エネ産",
+          "img": null
+        },
+        {
+          "text": "サビコン",
+          "img": null
+        },
+        {
+          "text": "ICTコン",
+          "img": null
+        },
+        {
+          "text": "スタッフ部（本部付,業管室,人開室,事業開発,DX推進）",
+          "img": null
+        }
+      ],
+      "type": "rentan",
+      "correctOrder": [
+        1,
+        0,
+        3,
+        2
+      ],
+      "rankCount": 4,
+      "timeLimit": 25,
+      "points": 10,
+      "img": null,
+      "intro": "昨日の経営戦略会議でも周知した「コンサル本部トレンド調査アンケート」、ご回答いただきありがとうございます。おかげさまで298名の皆様から回答を頂戴できました。では、",
+      "reference": null
+    },
+    {
+      "id": "p3_q2",
+      "text": "「きのこの山」が選ばれた割合は？",
       "choices": [
         {
           "text": "17%",
@@ -375,189 +483,468 @@
       "type": "single",
       "correctIndex": 1,
       "timeLimit": 20,
-      "points": 10
-    },
-    {
-      "id": "2814f855-9c07-4076-a45c-4d31b5c099a5",
-      "text": "1週間前に発出した「本部レクトレンド調査アンケート」、回答数は？",
+      "points": 10,
       "img": null,
       "intro": null,
+      "reference": "【参考】きのこの山：37%、たけのこの里：63%"
+    },
+    {
+      "id": "p3_q3",
+      "text": "○○の秋。回答率が高い順に並べて",
       "choices": [
         {
-          "text": "114人",
+          "text": "スポーツの秋",
           "img": null
         },
         {
-          "text": "224人",
+          "text": "読書の秋",
           "img": null
         },
         {
-          "text": "334人",
+          "text": "芸術の秋",
           "img": null
         },
         {
-          "text": "444人",
+          "text": "食欲の秋",
+          "img": null
+        }
+      ],
+      "type": "rentan",
+      "correctOrder": [
+        3,
+        0,
+        2,
+        1
+      ],
+      "rankCount": 4,
+      "timeLimit": 25,
+      "points": 10,
+      "img": null,
+      "intro": "「秋と言えば何ですか」の設問について",
+      "reference": "【参考】スポーツの秋：30.5%、読書の秋：7.0%、芸術の秋：10.4%、食欲の秋：52.0%"
+    },
+    {
+      "id": "p3_q4",
+      "text": "好きなコンビニ、2位はどれ",
+      "choices": [
+        {
+          "text": "セブンイレブン",
+          "img": null
+        },
+        {
+          "text": "ローソン",
+          "img": null
+        },
+        {
+          "text": "ファミリーマート",
+          "img": null
+        },
+        {
+          "text": "ミニストップ",
           "img": null
         }
       ],
       "type": "single",
       "correctIndex": 1,
       "timeLimit": 20,
-      "points": 10
+      "points": 10,
+      "img": null,
+      "intro": "「好きなコンビニはどれですか」について。圧倒的1位はセブンイレブン。では、",
+      "reference": "【参考】セブンイレブン：62.1%、ローソン：17.1%、ファミリーマート：14.4%、ミニストップ：2.7%"
     },
     {
-      "id": "53257e48-2c5f-4882-9efa-b4fec9cad58c",
-      "text": "小林さん、何座？or 楽器？",
-      "img": null,
-      "intro": null,
+      "id": "p3_q5",
+      "text": "「好きな生成AIは？」人気順に並べて",
       "choices": [
         {
-          "text": "a",
+          "text": "ChatGPT",
           "img": null
         },
         {
-          "text": "b",
+          "text": "Claude",
+          "img": null
+        },
+        {
+          "text": "Copilot",
+          "img": null
+        },
+        {
+          "text": "Gemini",
+          "img": null
+        }
+      ],
+      "type": "rentan",
+      "correctOrder": [
+        0,
+        1,
+        3,
+        2
+      ],
+      "rankCount": 4,
+      "timeLimit": 25,
+      "points": 10,
+      "img": null,
+      "intro": null,
+      "reference": "【参考】ChatGPT：40.6%、Claude：36.6%、Gemini：14.1%、Copilot：8.7%"
+    },
+    {
+      "id": "p3_q6",
+      "text": "「好きな生成AIは？」AIコンの人気順に並べて",
+      "choices": [
+        {
+          "text": "ChatGPT",
+          "img": null
+        },
+        {
+          "text": "Claude",
+          "img": null
+        },
+        {
+          "text": "Copilot",
+          "img": null
+        },
+        {
+          "text": "Gemini",
+          "img": null
+        }
+      ],
+      "type": "rentan",
+      "correctOrder": [
+        1,
+        0,
+        3,
+        2
+      ],
+      "rankCount": 4,
+      "timeLimit": 25,
+      "points": 10,
+      "img": null,
+      "intro": "ではAIコンの見解はどうでしょう？",
+      "reference": "【参考】ChatGPT：40.6%、Claude：36.6%、Gemini：14.1%、Copilot：8.7%"
+    },
+    {
+      "id": "p3_q7",
+      "text": "「特殊能力を1つもらえるなら？」未来を見たいコンサルタントが最も多い部署は？",
+      "choices": [
+        {
+          "text": "サビコン",
+          "img": null
+        },
+        {
+          "text": "グロ造",
+          "img": null
+        },
+        {
+          "text": "経コン",
+          "img": null
+        },
+        {
+          "text": "AI戦略",
           "img": null
         }
       ],
       "type": "single",
       "correctIndex": 0,
       "timeLimit": 20,
-      "points": 10
+      "points": 10,
+      "img": null,
+      "intro": "「特殊能力を1つもらえるなら？」は4択の質問でした。「瞬間移動」、「空を飛ぶ」、「人の心が読める」より、「未来を見る」を選んだ、未来を見たいコンサルタントが最も多い部署はどこでしょう？",
+      "reference": "サビコン：46.7%、経コン：40.0%、グロ造：26.3%、AI戦略：22.2%"
     },
     {
-      "id": "28509295-26cf-43fa-9351-6402153edc04",
-      "text": "本日の本部レクの部別参加率、（現場部のうち）最も多い部はどこ？\n※参加可否アンケートで「はい」と回答した人数",
-      "img": null,
-      "intro": null,
+      "id": "p4_q1",
+      "text": "現金派は誰でしょう？",
       "choices": [
         {
-          "text": "マーケ戦コン",
+          "text": "岡崎さん",
           "img": null
         },
         {
-          "text": "AI戦略コン",
+          "text": "小林さん",
           "img": null
         },
         {
-          "text": "業務ITコン",
+          "text": "山田さん",
           "img": null
         },
         {
-          "text": "経営コン",
+          "text": "田中さん",
           "img": null
         }
       ],
       "type": "single",
-      "correctIndex": 1,
+      "correctIndex": 0,
       "timeLimit": 20,
-      "points": 10
+      "points": 10,
+      "img": null,
+      "intro": "今回のレクは、部室長の皆さまにご出資いただいて、景品を購入しています。部室長の皆さまには、銀行振り込み、現金、paypay等でご寄付を賜りました。では、",
+      "reference": null
     },
     {
-      "id": "86e0b1bd-443d-4ed3-8a32-583b623ce385",
-      "text": "今日は何曜日",
-      "img": null,
-      "intro": null,
+      "id": "p4_q2",
+      "text": "握力対決、握りが強い順に並べ替えて（5連単）",
       "choices": [
         {
-          "text": "木曜日",
+          "text": "業管室　岡崎さん",
           "img": null
         },
         {
-          "text": "金曜日",
+          "text": "サビコン　小針さん",
           "img": null
         },
         {
-          "text": "土曜日",
+          "text": "ヘル産　岡本さん",
           "img": null
         },
         {
-          "text": "日曜日",
+          "text": "社シ２部　佐藤仁さん",
+          "img": null
+        },
+        {
+          "text": "AI戦略　西野さん",
+          "img": null
+        }
+      ],
+      "type": "rentan",
+      "correctOrder": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "rankCount": 5,
+      "timeLimit": 25,
+      "points": 10,
+      "img": null,
+      "intro": "第一試合は握力対決です。握力自慢の5名の部室長にご登壇いただき、シンプルな力勝負をしていただきます。",
+      "reference": null
+    },
+    {
+      "id": "p4_q3",
+      "text": "ストップウォッチ対決、10秒を正確に測定できるのは？（10秒を超えたら失格）",
+      "choices": [
+        {
+          "text": "宮脇さん　人開室",
+          "img": null
+        },
+        {
+          "text": "西野さん　AI戦略",
+          "img": null
+        },
+        {
+          "text": "高橋弓子さん　マーケコン",
+          "img": null
+        },
+        {
+          "text": "高橋寛和さん　業務IT",
+          "img": null
+        },
+        {
+          "text": "若菜さん　UIコン",
+          "img": null
+        }
+      ],
+      "type": "single",
+      "timeLimit": 20,
+      "points": 10,
+      "img": null,
+      "intro": "第2試合はストップウォッチ対決です。心を研ぎ澄まして「10秒」を測定していただき、最も近い方が優勝になります。ただし「10秒を超えたらドボンで失格」になります。",
+      "reference": null,
+      "correctIndex": 0
+    },
+    {
+      "id": "p4_q4",
+      "text": "手押し相撲、優勝・準優勝は誰でしょう？（2連単）",
+      "choices": [
+        {
+          "text": "グロ造　池幡さん",
+          "img": null
+        },
+        {
+          "text": "金コン　米村さん",
+          "img": null
+        },
+        {
+          "text": "マーケコン　田中さん",
+          "img": null
+        },
+        {
+          "text": "AIコン　山田さん",
+          "img": null
+        }
+      ],
+      "type": "rentan",
+      "correctOrder": [
+        0,
+        1
+      ],
+      "rankCount": 2,
+      "timeLimit": 25,
+      "points": 10,
+      "img": null,
+      "intro": "第4試合は手押し相撲です。手押し相撲自慢の4名でトーナメント形式で行い、優勝者、準優勝者を決定します。",
+      "reference": null
+    },
+    {
+      "id": "p4_q5",
+      "text": "けん玉対決、優勝は誰でしょう？",
+      "choices": [
+        {
+          "text": "事業開発　古賀さん",
+          "img": null
+        },
+        {
+          "text": "マーケコン　田中さん",
+          "img": null
+        },
+        {
+          "text": "AIコン　山田さん",
+          "img": null
+        },
+        {
+          "text": "UIコン　若菜さん",
           "img": null
         }
       ],
       "type": "single",
       "correctIndex": 0,
-      "timeLimit": 60,
-      "points": 10
+      "timeLimit": 20,
+      "points": 10,
+      "img": null,
+      "intro": "第3試合はけん玉対決です。1人ずつ「大皿」に挑戦いただき、優勝者が決まるまでサドンデス形式で行います。",
+      "reference": null
     },
     {
-      "id": "85e95a0b-0183-44ca-9b0b-2f52044294ef",
-      "text": "本部レクで用いる「コンサル本部トレンド調査」、現在回答者は何人？",
+      "id": "74eeb94d-c913-43f2-b2c9-5f182ef5c32c",
+      "text": "2023年時点の小林さんの「休日やオフの過ごし方」に書かれた文として正しくないものは？",
       "img": null,
-      "intro": null,
+      "intro": "現本部長、小林さんは3年前の「新任役員インタビュー」にて「休日やオフの過ごし方」についてご回答されています。では、",
       "choices": [
         {
-          "text": "125人",
+          "text": "2級船舶免許を取りました",
           "img": null
         },
         {
-          "text": "225人",
+          "text": "船で通勤できるかもしれないと発想も広がりました",
           "img": null
         },
         {
-          "text": "325人",
+          "text": "家ではスコッチウィスキーを中心に楽しんでいます",
           "img": null
         },
         {
-          "text": "425人",
+          "text": "ドラマー真矢に憧れています",
+          "img": null
+        }
+      ],
+      "type": "single",
+      "correctIndex": 3,
+      "timeLimit": 20,
+      "points": 10,
+      "reference": "【参考：原文ママ】もともと車などの動くものが好きなのですが、車では行動範囲が限られます。活動範囲を広げるために、この5月に2級船舶免許を取りました。すると、見える世界が変わってきて、自宅近くの荒川の支流にマリーナがあることに気づきました。このマリーナから荒川を下って東京湾に出ていけば、MMにも行ける。船で通勤できるかもしれないと発想も広がりました。\n週末の私は活動的ですが、平日の夜には家でのんびりと過ごしています。AmazonプライムやParaviを見ながら、ジョニーウォーカーやバランタイン、ボウモアなど、スコッチウィスキーを中心に楽しんでいます。"
+    },
+    {
+      "id": "5ea7ef40-b9fa-44bc-9d5c-7f32acb2de20",
+      "text": "パートナー令和クイズ対決、優勝するのは誰？",
+      "img": null,
+      "intro": "第5試合はパートナーによる令和常識クイズ対決です。1問10秒で4択クイズを5問出題します。5問終了後同率首位の場合は、サドンデスを行います。",
+      "choices": [
+        {
+          "text": "石綿さん",
+          "img": null
+        },
+        {
+          "text": "風間さん",
+          "img": null
+        },
+        {
+          "text": "小林さん",
+          "img": null
+        },
+        {
+          "text": "紺谷さん",
+          "img": null
+        },
+        {
+          "text": "榊原さん",
+          "img": null
+        },
+        {
+          "text": "塩野さん",
+          "img": null
+        },
+        {
+          "text": "田中さん",
+          "img": null
+        },
+        {
+          "text": "横内さん",
           "img": null
         }
       ],
       "type": "single",
       "correctIndex": 0,
-      "timeLimit": 60,
-      "points": 10
+      "timeLimit": 20,
+      "points": 10,
+      "reference": null
     }
   ],
   "periods": [
     {
-      "id": "per_mv5km0px",
+      "id": "per_p1",
       "name": "Period 1",
       "questionIds": [
-        "549f2d67-4cda-475d-9642-e711d7f9c0b8",
-        "75938c2a-a90d-4c5d-bc26-dde0b84d306f",
-        "5b106af9-d7bc-4015-8acc-dd0e98e113db",
-        "5a2ae2c9-a393-458e-9d1b-50fd29e96afa",
-        "c92c5be7-4c3f-4be5-97ab-55f46ce04733",
-        "bbb43ee1-1fed-4405-a354-65895103bab8",
-        "5827a956-cbb3-45e7-aa33-03e7961cfab3",
-        "1d475751-3461-4676-8be5-331a37245142"
+        "p1_q1",
+        "p1_q2",
+        "p1_q3",
+        "p1_q4",
+        "p1_q6",
+        "74eeb94d-c913-43f2-b2c9-5f182ef5c32c",
+        "p1_q7",
+        "p1_q8"
       ],
-      "topic": ""
+      "topic": "このピリオドでは、NRIに属する皆さんならわかるであろう4択クイズを一挙に8問出題します。\n一度押した回答は変更できません。ご注意ください。"
     },
     {
-      "id": "per_mv5kmid0",
-      "name": "Period 2 2択",
+      "id": "per_p2",
+      "name": "Period 2",
       "questionIds": [
-        "8b3061fd-7312-45d2-aefd-dfefae3fd391",
-        "8e0071d8-9f3f-41fb-b36b-b313ca5a252d",
-        "b49d2b8e-c684-415f-8d38-0cfa8e2466c4",
-        "4eeff79f-36b8-4f02-9e62-0da484d9e13c",
-        "4317d0aa-36f2-4a43-8941-06e58d8bd966"
-      ]
+        "p2_q1",
+        "p2_q2",
+        "p2_q4",
+        "p2_q3",
+        "p2_q5",
+        "p2_q6"
+      ],
+      "topic": "このピリオドではNRIに属する皆さまなら答えられるであろう、定量的な指標を比較する問題を6題出題します。後半3問は「4連単」形式です。順番に4つをクリックしてください。3つクリックするまでは変更ができますが、すべて押し終えた後は変更できないのでご注意ください。"
     },
     {
-      "id": "per_mv5kslch",
+      "id": "per_p3",
       "name": "Period 3 アンケート",
       "questionIds": [
-        "2814f855-9c07-4076-a45c-4d31b5c099a5",
-        "67001f6c-bf7d-483d-82bd-761c0c49e94b"
+        "p3_q1",
+        "p3_q2",
+        "p3_q3",
+        "p3_q4",
+        "p3_q5",
+        "p3_q6",
+        "p3_q7"
       ],
-      "topic": ""
+      "topic": "このピリオドでは、先日ご回答いただいたアンケートをもとに全7問出題します。"
     },
     {
-      "id": "per_mv62zc09",
-      "name": "Period 4 力自慢対決",
-      "questionIds": []
-    },
-    {
-      "id": "per_mv7vzp5d",
-      "name": "Period test",
-      "topic": "",
+      "id": "per_p4",
+      "name": "Period 4 部室長対決",
       "questionIds": [
-        "86e0b1bd-443d-4ed3-8a32-583b623ce385"
-      ]
+        "p4_q1",
+        "p4_q2",
+        "p4_q3",
+        "p4_q5",
+        "p4_q4",
+        "5ea7ef40-b9fa-44bc-9d5c-7f32acb2de20"
+      ],
+      "topic": "このピリオドでは部室長およびパートナーの方々にご登壇いただき、4-5人ごとに全5試合対決をしていただきます。"
     }
   ]
 }
