@@ -1,0 +1,563 @@
+{
+  "questions": [
+    {
+      "id": "1d475751-3461-4676-8be5-331a37245142",
+      "text": "大手町は東京メトロ乗降者数2位の駅。では3位は？",
+      "choices": [
+        {
+          "text": "銀座",
+          "img": null
+        },
+        {
+          "text": "新橋",
+          "img": null
+        },
+        {
+          "text": "豊洲",
+          "img": null
+        },
+        {
+          "text": "北千住",
+          "img": null
+        }
+      ],
+      "type": "single",
+      "correctIndex": 3,
+      "timeLimit": 20,
+      "points": 10
+    },
+    {
+      "id": "bbb43ee1-1fed-4405-a354-65895103bab8",
+      "text": "NRIの新卒採用サイトに掲載されている「NRIを表す10のキーワード」に含まれていないものは？",
+      "choices": [
+        {
+          "text": "盤石な顧客基盤",
+          "img": null
+        },
+        {
+          "text": "共創する知",
+          "img": null
+        },
+        {
+          "text": "先見力",
+          "img": null
+        },
+        {
+          "text": "3：7",
+          "img": null
+        }
+      ],
+      "type": "single",
+      "correctIndex": 1,
+      "timeLimit": 20,
+      "points": 10
+    },
+    {
+      "id": "5a2ae2c9-a393-458e-9d1b-50fd29e96afa",
+      "text": "2026年度に新卒入社（第二新卒も含む）した本部の新人は何人？",
+      "choices": [
+        {
+          "text": "60人",
+          "img": null
+        },
+        {
+          "text": "75人",
+          "img": null
+        },
+        {
+          "text": "85人",
+          "img": null
+        },
+        {
+          "text": "100人",
+          "img": null
+        }
+      ],
+      "type": "single",
+      "correctIndex": 2,
+      "timeLimit": 20,
+      "points": 10
+    },
+    {
+      "id": "8b3061fd-7312-45d2-aefd-dfefae3fd391",
+      "text": "最も「高い」のはどれ",
+      "choices": [
+        {
+          "text": "歴代紅白歌合戦の最高視聴率",
+          "img": null
+        },
+        {
+          "text": "2026年現在のNRIの有給休暇取得率",
+          "img": null
+        },
+        {
+          "text": "2026年度東京大学文一共通テスト足切りの得点率",
+          "img": null
+        },
+        {
+          "text": "コンサル本部CAITO月間利用率（2026年8月、CAITOを一度でも使ったユーザーの率）",
+          "img": null
+        }
+      ],
+      "type": "single",
+      "correctIndex": 0,
+      "timeLimit": 20,
+      "points": 10,
+      "img": null,
+      "intro": null
+    },
+    {
+      "id": "8e0071d8-9f3f-41fb-b36b-b313ca5a252d",
+      "text": "最も「高い」のはどれ",
+      "choices": [
+        {
+          "text": "東京サンケイビル",
+          "img": null
+        },
+        {
+          "text": "大手町フィナンシャルシティ グランキューブ（GC）",
+          "img": null
+        },
+        {
+          "text": "横浜野村ビル（MM）",
+          "img": null
+        }
+      ],
+      "type": "rentan",
+      "timeLimit": 10,
+      "points": 10,
+      "img": null,
+      "intro": null,
+      "correctOrder": [
+        1,
+        0,
+        2
+      ],
+      "rankCount": 3
+    },
+    {
+      "id": "b49d2b8e-c684-415f-8d38-0cfa8e2466c4",
+      "text": "長いのはどっち",
+      "choices": [
+        {
+          "text": "○○さんの足のサイズ",
+          "img": null
+        },
+        {
+          "text": "カエル箱の「よこ」の長さ",
+          "img": null
+        }
+      ],
+      "type": "single",
+      "correctIndex": 1,
+      "timeLimit": 20,
+      "points": 10
+    },
+    {
+      "id": "5827a956-cbb3-45e7-aa33-03e7961cfab3",
+      "text": "大手町グランキューブの高さは？",
+      "choices": [
+        {
+          "text": "174.120m",
+          "img": null
+        },
+        {
+          "text": "168.280m",
+          "img": null
+        },
+        {
+          "text": "162.440m",
+          "img": null
+        },
+        {
+          "text": "156.580m",
+          "img": null
+        }
+      ],
+      "type": "single",
+      "correctIndex": 1,
+      "timeLimit": 20,
+      "points": 10
+    },
+    {
+      "id": "c92c5be7-4c3f-4be5-97ab-55f46ce04733",
+      "text": "コンサル本部で現在最も多い名前は？",
+      "choices": [
+        {
+          "text": "Yuki",
+          "img": null
+        },
+        {
+          "text": "Kota",
+          "img": null
+        },
+        {
+          "text": "Ryo",
+          "img": null
+        },
+        {
+          "text": "Ryota",
+          "img": null
+        }
+      ],
+      "type": "single",
+      "correctIndex": 2,
+      "timeLimit": 20,
+      "points": 10
+    },
+    {
+      "id": "5b106af9-d7bc-4015-8acc-dd0e98e113db",
+      "text": "2016年10月時点のNRIの株価はどれ",
+      "choices": [
+        {
+          "text": "1,105円",
+          "img": null
+        },
+        {
+          "text": "2,311円",
+          "img": null
+        },
+        {
+          "text": "3,305円",
+          "img": null
+        },
+        {
+          "text": "6,030円",
+          "img": null
+        }
+      ],
+      "type": "single",
+      "correctIndex": 0,
+      "timeLimit": 20,
+      "points": 10
+    },
+    {
+      "id": "4eeff79f-36b8-4f02-9e62-0da484d9e13c",
+      "text": "起きた年が古い順に並べて",
+      "choices": [
+        {
+          "text": "（株）野村総合研究所（NRI）設立",
+          "img": null
+        },
+        {
+          "text": "後楽園スタジアム開場",
+          "img": null
+        },
+        {
+          "text": "アインシュタイン「特殊相対性理論」発表",
+          "img": null
+        },
+        {
+          "text": "セブン-イレブンの日本1号店、東京・豊洲にオープン",
+          "img": null
+        }
+      ],
+      "type": "rentan",
+      "correctOrder": [
+        2,
+        1,
+        0
+      ],
+      "rankCount": 3,
+      "timeLimit": 20,
+      "points": 10
+    },
+    {
+      "id": "4317d0aa-36f2-4a43-8941-06e58d8bd966",
+      "text": "起きた年が古い順に並べて",
+      "choices": [
+        {
+          "text": "北島康介「なんも言えねぇ」",
+          "img": null
+        },
+        {
+          "text": "北島康介「ちょーきもちいい」",
+          "img": null
+        },
+        {
+          "text": "水石さん、NRI入社",
+          "img": null
+        },
+        {
+          "text": "野村総合研究所（上海）有限公司設立",
+          "img": null
+        }
+      ],
+      "type": "rentan",
+      "correctOrder": [
+        3,
+        1,
+        2
+      ],
+      "rankCount": 3,
+      "timeLimit": 20,
+      "points": 10
+    },
+    {
+      "id": "75938c2a-a90d-4c5d-bc26-dde0b84d306f",
+      "text": "今から10年前の2016年、当時の本部レクのイベントで骨折した人は誰？",
+      "choices": [
+        {
+          "text": "村田さん(元本部長)",
+          "img": null
+        },
+        {
+          "text": "此本さん(現会長)",
+          "img": null
+        },
+        {
+          "text": "柳沢さん(現社長)",
+          "img": null
+        },
+        {
+          "text": "小林さん(現本部長)",
+          "img": null
+        }
+      ],
+      "type": "single",
+      "correctIndex": 0,
+      "timeLimit": 20,
+      "points": 10,
+      "img": null,
+      "intro": "コンサル本部レクは今年8年ぶりの開催ですが、過去は毎年開催していたコンテンツで様々なドラマがありました。"
+    },
+    {
+      "id": "549f2d67-4cda-475d-9642-e711d7f9c0b8",
+      "text": "本家のTBSオールスター感謝祭として正しいのは？",
+      "img": null,
+      "choices": [
+        {
+          "text": "優勝賞金1000万円",
+          "img": null
+        },
+        {
+          "text": "名物コーナー「赤坂2丁目ミニマラソン」",
+          "img": null
+        },
+        {
+          "text": "現在放送80回",
+          "img": null
+        },
+        {
+          "text": "番組開始当時島崎和歌子さんは18歳",
+          "img": null
+        }
+      ],
+      "type": "single",
+      "correctIndex": 3,
+      "timeLimit": 20,
+      "points": 10,
+      "intro": "この場は「コンサル本部大感謝祭」と銘打っています。このネーミングの元ネタ、本家の「オールスター感謝祭」はつい先週にもTBSで放送されていました。では、"
+    },
+    {
+      "id": "67001f6c-bf7d-483d-82bd-761c0c49e94b",
+      "text": "「きのこの山」が選ばれた割合は？",
+      "img": null,
+      "intro": "アンケートの設問、「「きのこの山」と「たけのこの里」、あなたはどちら派？」。「きのこの山」が選ばれた割合は何パーセントでしょう？",
+      "choices": [
+        {
+          "text": "17%",
+          "img": null
+        },
+        {
+          "text": "37%",
+          "img": null
+        },
+        {
+          "text": "57%",
+          "img": null
+        },
+        {
+          "text": "77%",
+          "img": null
+        }
+      ],
+      "type": "single",
+      "correctIndex": 1,
+      "timeLimit": 20,
+      "points": 10
+    },
+    {
+      "id": "2814f855-9c07-4076-a45c-4d31b5c099a5",
+      "text": "1週間前に発出した「本部レクトレンド調査アンケート」、回答数は？",
+      "img": null,
+      "intro": null,
+      "choices": [
+        {
+          "text": "114人",
+          "img": null
+        },
+        {
+          "text": "224人",
+          "img": null
+        },
+        {
+          "text": "334人",
+          "img": null
+        },
+        {
+          "text": "444人",
+          "img": null
+        }
+      ],
+      "type": "single",
+      "correctIndex": 1,
+      "timeLimit": 20,
+      "points": 10
+    },
+    {
+      "id": "53257e48-2c5f-4882-9efa-b4fec9cad58c",
+      "text": "小林さん、何座？or 楽器？",
+      "img": null,
+      "intro": null,
+      "choices": [
+        {
+          "text": "a",
+          "img": null
+        },
+        {
+          "text": "b",
+          "img": null
+        }
+      ],
+      "type": "single",
+      "correctIndex": 0,
+      "timeLimit": 20,
+      "points": 10
+    },
+    {
+      "id": "28509295-26cf-43fa-9351-6402153edc04",
+      "text": "本日の本部レクの部別参加率、（現場部のうち）最も多い部はどこ？\n※参加可否アンケートで「はい」と回答した人数",
+      "img": null,
+      "intro": null,
+      "choices": [
+        {
+          "text": "マーケ戦コン",
+          "img": null
+        },
+        {
+          "text": "AI戦略コン",
+          "img": null
+        },
+        {
+          "text": "業務ITコン",
+          "img": null
+        },
+        {
+          "text": "経営コン",
+          "img": null
+        }
+      ],
+      "type": "single",
+      "correctIndex": 1,
+      "timeLimit": 20,
+      "points": 10
+    },
+    {
+      "id": "86e0b1bd-443d-4ed3-8a32-583b623ce385",
+      "text": "今日は何曜日",
+      "img": null,
+      "intro": null,
+      "choices": [
+        {
+          "text": "木曜日",
+          "img": null
+        },
+        {
+          "text": "金曜日",
+          "img": null
+        },
+        {
+          "text": "土曜日",
+          "img": null
+        },
+        {
+          "text": "日曜日",
+          "img": null
+        }
+      ],
+      "type": "single",
+      "correctIndex": 0,
+      "timeLimit": 60,
+      "points": 10
+    },
+    {
+      "id": "85e95a0b-0183-44ca-9b0b-2f52044294ef",
+      "text": "本部レクで用いる「コンサル本部トレンド調査」、現在回答者は何人？",
+      "img": null,
+      "intro": null,
+      "choices": [
+        {
+          "text": "125人",
+          "img": null
+        },
+        {
+          "text": "225人",
+          "img": null
+        },
+        {
+          "text": "325人",
+          "img": null
+        },
+        {
+          "text": "425人",
+          "img": null
+        }
+      ],
+      "type": "single",
+      "correctIndex": 0,
+      "timeLimit": 60,
+      "points": 10
+    }
+  ],
+  "periods": [
+    {
+      "id": "per_mv5km0px",
+      "name": "Period 1",
+      "questionIds": [
+        "549f2d67-4cda-475d-9642-e711d7f9c0b8",
+        "75938c2a-a90d-4c5d-bc26-dde0b84d306f",
+        "5b106af9-d7bc-4015-8acc-dd0e98e113db",
+        "5a2ae2c9-a393-458e-9d1b-50fd29e96afa",
+        "c92c5be7-4c3f-4be5-97ab-55f46ce04733",
+        "bbb43ee1-1fed-4405-a354-65895103bab8",
+        "5827a956-cbb3-45e7-aa33-03e7961cfab3",
+        "1d475751-3461-4676-8be5-331a37245142"
+      ],
+      "topic": ""
+    },
+    {
+      "id": "per_mv5kmid0",
+      "name": "Period 2 2択",
+      "questionIds": [
+        "8b3061fd-7312-45d2-aefd-dfefae3fd391",
+        "8e0071d8-9f3f-41fb-b36b-b313ca5a252d",
+        "b49d2b8e-c684-415f-8d38-0cfa8e2466c4",
+        "4eeff79f-36b8-4f02-9e62-0da484d9e13c",
+        "4317d0aa-36f2-4a43-8941-06e58d8bd966"
+      ]
+    },
+    {
+      "id": "per_mv5kslch",
+      "name": "Period 3 アンケート",
+      "questionIds": [
+        "2814f855-9c07-4076-a45c-4d31b5c099a5",
+        "67001f6c-bf7d-483d-82bd-761c0c49e94b"
+      ],
+      "topic": ""
+    },
+    {
+      "id": "per_mv62zc09",
+      "name": "Period 4 力自慢対決",
+      "questionIds": []
+    },
+    {
+      "id": "per_mv7vzp5d",
+      "name": "Period test",
+      "topic": "",
+      "questionIds": [
+        "86e0b1bd-443d-4ed3-8a32-583b623ce385"
+      ]
+    }
+  ]
+}
