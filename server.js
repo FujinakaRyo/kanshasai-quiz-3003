@@ -26,7 +26,7 @@ function saveQuestions() {
 // 状態（すべてメモリ上。サーバーを止めると消えます）
 // ---------------------------------------------------------------------------
 const state = {
-  phase: 'lobby',        // lobby | question | reveal | ranking | finished
+  phase: 'lobby',        // lobby | question | reveal | ranking | finished | award
   questions: [],         // { id, text, choices:[], correctIndex, timeLimit }
   periods: [],           // { id, name, questionIds: string[] }
   activePeriodId: null,  // currently running period id
@@ -37,6 +37,7 @@ const state = {
   scored: {},            // qid -> true（二重採点防止）
   emergencyMode: false,  // true → 全プレイヤーを簡易版(/emergency)へリダイレクト
   pubUrl: '',            // 管理者が設定した公開URL（present画面のQR用）
+  awardStep: -1,         // 表彰式ステップ（0=100-81位, 1=80-61位, ..., 8=1位, 9=部-3位, 10=部2位, 11=部1位）
 };
 
 try {
@@ -56,7 +57,7 @@ try {
 //   まっさらに始めたいときは STATE_FILE を消すか、FRESH=1 node server.js で起動。
 // ---------------------------------------------------------------------------
 const STATE_FILE = nodePath.join(__dirname, 'kanshasai-quiz-3003.state.json');
-const PERSIST_KEYS = ['phase', 'activePeriodId', 'players', 'answers', 'currentIndex', 'startedAt', 'scored', 'emergencyMode', 'pubUrl'];
+const PERSIST_KEYS = ['phase', 'activePeriodId', 'players', 'answers', 'currentIndex', 'startedAt', 'scored', 'emergencyMode', 'pubUrl', 'awardStep'];
 let stateDirty = false;
 function markStateDirty() { stateDirty = true; }
 function saveState() {
@@ -215,7 +216,7 @@ function adminView() {
     questions: state.questions.map((qq) => ({
       id: qq.id, text: qq.text, img: qq.img || null, intro: qq.intro || null, choices: qq.choices, type: qq.type || 'single',
       correctIndex: qq.correctIndex, correctOrder: qq.correctOrder, rankCount: qq.rankCount,
-      timeLimit: qq.timeLimit, points: qq.points || 100,
+      timeLimit: qq.timeLimit, points: qq.points || 100, reference: qq.reference || null,
     })),
     players: players,
     current: q ? {
@@ -223,7 +224,7 @@ function adminView() {
       text: q.text, img: q.img || null, choices: q.choices, type: q.type || 'single',
       correctIndex: q.correctIndex, correctOrder: q.correctOrder, rankCount: q.rankCount,
       timeLimit: q.timeLimit, remainingMs: remainingMs(),
-      counts: choiceCounts(), answeredCount: Object.keys(state.answers[q.id] || {}).length,
+      counts: choiceCounts(), answeredCount: Object.keys(state.answers[q.id] || {}).length, reference: q.reference || null,
     } : null,
     ranking: rankingList(),
     deptRanking: deptRankingList(),
@@ -450,13 +451,13 @@ function handlePost(path, body, res) {
         if (correctOrder.length !== rankCount || correctOrder.some((c) => !(c >= 0 && c < choices.length))) {
           return sendJson(res, { ok: false, error: '連単の正解順序が不正です' });
         }
-        qdata = { id: crypto.randomUUID(), text, img: body.img || null, intro: String(body.intro || '').trim() || null, choices, type: 'rentan', correctOrder, rankCount, timeLimit, points };
+        qdata = { id: crypto.randomUUID(), text, img: body.img || null, intro: String(body.intro || '').trim() || null, choices, type: 'rentan', correctOrder, rankCount, timeLimit, points, reference: String(body.reference || '').trim() || null };
       } else {
         const correctIndex = Number(body.correctIndex);
         if (!(correctIndex >= 0 && correctIndex < choices.length)) {
           return sendJson(res, { ok: false, error: '正解の指定が必要です' });
         }
-        qdata = { id: crypto.randomUUID(), text, img: body.img || null, intro: String(body.intro || '').trim() || null, choices, type: 'single', correctIndex, timeLimit, points };
+        qdata = { id: crypto.randomUUID(), text, img: body.img || null, intro: String(body.intro || '').trim() || null, choices, type: 'single', correctIndex, timeLimit, points, reference: String(body.reference || '').trim() || null };
       }
       state.questions.push(qdata);
       saveQuestions();
@@ -545,6 +546,20 @@ function handlePost(path, body, res) {
       broadcastAll();
       return;
     }
+    case '/api/admin/award': {
+      state.phase = 'award';
+      state.awardStep = 0;
+      sendJson(res, { ok: true });
+      broadcastAll();
+      return;
+    }
+    case '/api/admin/nextAward': {
+      if (state.phase !== 'award') return sendJson(res, { ok: false });
+      state.awardStep = (state.awardStep || 0) + 1;
+      sendJson(res, { ok: true });
+      broadcastAll();
+      return;
+    }
     case '/api/admin/next': {
       const ap = state.periods.find(p => p.id === state.activePeriodId);
       if (ap && state.currentIndex + 1 < ap.questionIds.length) {
@@ -557,6 +572,28 @@ function handlePost(path, body, res) {
       }
       sendJson(res, { ok: true });
       broadcastAll();
+      return;
+    }
+    case '/api/admin/updateQuestionAnswer': {
+      const q = currentQuestion();
+      if (!q || state.phase !== 'question') return sendJson(res, { ok: false, error: '出題中のみ変更可能です' });
+      if (q.type === 'rentan') {
+        const newOrder = (body.correctOrder || []).map(Number);
+        if (newOrder.length !== (q.rankCount || newOrder.length) || newOrder.some((c) => !(c >= 0 && c < q.choices.length))) {
+          return sendJson(res, { ok: false, error: '連単の正解順序が不正です' });
+        }
+        q.correctOrder = newOrder;
+        delete q.correctIndex;
+      } else {
+        const newIndex = Number(body.correctIndex);
+        if (!(newIndex >= 0 && newIndex < q.choices.length)) {
+          return sendJson(res, { ok: false, error: '正解インデックスが不正です' });
+        }
+        q.correctIndex = newIndex;
+      }
+      saveQuestions();
+      sendJson(res, { ok: true });
+      broadcastAdmins();
       return;
     }
     case '/api/admin/emergency': {
@@ -597,7 +634,7 @@ function handlePost(path, body, res) {
       if (!eText || eChoices.length < 2) {
         return sendJson(res, { ok: false, error: '問題文・選択肢2つ以上が必要です' });
       }
-      eq.text = eText; eq.img = body.img !== undefined ? (body.img || null) : (eq.img || null); eq.intro = body.intro !== undefined ? (String(body.intro || '').trim() || null) : (eq.intro || null); eq.choices = eChoices; eq.type = eType; eq.timeLimit = eTime; eq.points = ePts;
+      eq.text = eText; eq.img = body.img !== undefined ? (body.img || null) : (eq.img || null); eq.intro = body.intro !== undefined ? (String(body.intro || '').trim() || null) : (eq.intro || null); eq.reference = body.reference !== undefined ? (String(body.reference || '').trim() || null) : (eq.reference || null); eq.choices = eChoices; eq.type = eType; eq.timeLimit = eTime; eq.points = ePts;
       if (eType === 'rentan') {
         const eOrder = (body.correctOrder || []).map(Number);
         const eRankCount = Math.min(eChoices.length, Math.max(1, Number(body.rankCount) || eOrder.length));
@@ -717,6 +754,12 @@ const server = http.createServer(async (req, res) => {
       res.writeHead(200, { 'Content-Type': mime, 'Accept-Ranges': 'bytes', 'Content-Length': size });
       return fs.createReadStream(fpath).pipe(res);
     } catch (e) { res.writeHead(404); return res.end('Media not found'); }
+  }
+  if (req.method === 'GET' && path === '/api/admin/export') {
+    const data = { questions: state.questions, periods: state.periods };
+    res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8', 'Content-Disposition': 'attachment; filename="kanshasai-quiz-export-' + Date.now() + '.json"' });
+    res.end(JSON.stringify(data, null, 2));
+    return;
   }
   if (req.method === 'POST') {
     const body = await readBody(req);
@@ -850,7 +893,7 @@ const PLAYER_HTML = `<!DOCTYPE html>
 <span class="spark" style="left:80%;top:66%;font-size:20px;animation-delay:.3s">✦</span>
 <div id="app" class="relative z-10 max-w-md mx-auto px-4 py-6 min-h-screen flex flex-col"></div>
 <script>
-var DEPTS=['グロ造','サビコン','金コン','ヘル産','ICTコン','UIコン','エネ産','社シス1','社シス2','経コン','業務IT','マーケコン','AI戦略','スタッフ部','出向・海外'];
+var DEPTS=['グロ事企・海外拠点・出向','サビコン','金コン','ヘル産','ICTコン','UIコン','エネ産','社シス1','社シス2','経コン','業務IT','マーケコン','AI戦略','本部付・国内スタッフ部室'];
 var S = { id:null, name:null, dept:null, es:null, answeredQ:-1, timer:null, rankTab:'player', lastV:null, rentanPicks:[] };
 var app = document.getElementById('app');
 
@@ -871,11 +914,11 @@ function renderJoin(){
     '<div class="flex-1 flex flex-col justify-center">'
     +'<div class="text-center mb-6"><div class="text-6xl mb-3">🎉</div>'
     +'<h1 class="text-3xl font-black tracking-wide" style="text-shadow:0 0 18px rgba(120,220,255,.7)">感謝祭クイズ</h1>'
-    +'<p class="text-cyan-200/90 text-sm mt-2">部署とニックネームを入力して参加</p></div>'
+    +'<p class="text-cyan-200/90 text-sm mt-2">部署とフルネームを入力して参加</p></div>'
     +'<select id="dept" class="w-full text-center text-lg bg-white/10 border-2 border-white/25 rounded-xl py-4 mb-3 outline-none focus:ring-2 ring-amber-400 text-white">'
     +'<option value="" disabled selected style="color:#333">部署を選択してください</option>'+opts
     +'</select>'
-    +'<input id="nm" maxlength="12" placeholder="ニックネーム" class="w-full text-center text-xl bg-white/10 border-2 border-white/25 rounded-xl py-4 mb-4 outline-none focus:ring-2 ring-amber-400 placeholder-white/40">'
+    +'<input id="nm" maxlength="12" placeholder="フルネーム（例. 水石 仁）" class="w-full text-center text-xl bg-white/10 border-2 border-white/25 rounded-xl py-4 mb-4 outline-none focus:ring-2 ring-amber-400 placeholder-white/40">'
     +'<button onclick="doJoin()" class="w-full bg-gradient-to-b from-amber-300 to-amber-500 active:from-amber-400 active:to-amber-600 text-slate-900 font-black text-xl rounded-xl py-4 shadow-lg">エントリー</button>'
     +'<div id="joinErr" class="text-red-300 text-sm text-center mt-2"></div>'
     +'</div>';
@@ -886,7 +929,7 @@ function doJoin(){
   var nm=document.getElementById('nm').value.trim();
   var err=document.getElementById('joinErr');
   if(!dept){ err.textContent='部署を選択してください'; return; }
-  if(!nm){ err.textContent='ニックネームを入力してください'; return; }
+  if(!nm){ err.textContent='フルネームを入力してください'; return; }
   S.name=nm; S.dept=dept;
   try{ localStorage.setItem('kq_name',nm); localStorage.setItem('kq_dept',dept); }catch(e){}
   connect();
@@ -944,7 +987,13 @@ function renderLobby(v){
     + '<div class="text-cyan-200">'+esc(v.me.name)+' さん</div>'
     + '<div class="mt-6 text-sm text-cyan-100/70">現在 '+v.joinCount+' 人が参加中</div>'
     + '<div class="mt-8 text-amber-300 font-bold animate-pulse">まもなく開始します…</div>'
+    + '<button onclick="editEntry()" class="mt-6 px-4 py-2 bg-slate-700/50 border border-slate-500 text-slate-300 text-sm rounded hover:bg-slate-600/70 transition">📝 情報を修正</button>'
     + '</div>';
+}
+function editEntry(){
+  S.name=null; S.dept=null;
+  try{ localStorage.removeItem('kq_name'); localStorage.removeItem('kq_dept'); }catch(e){}
+  location.reload();
 }
 
 function renderQuestion(v){
