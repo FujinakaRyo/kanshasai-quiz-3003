@@ -11,6 +11,7 @@ const fs = require('fs');
 const nodePath = require('path');
 
 const PORT = Number(process.env.PORT) || 3003;
+const SECRET_TOKEN = process.env.SECRET_TOKEN || '';
 const UPLOADS_DIR = nodePath.join(__dirname, 'uploads');
 if (!fs.existsSync(UPLOADS_DIR)) fs.mkdirSync(UPLOADS_DIR, { recursive: true });
 const DATA_FILE = nodePath.join(__dirname, 'kanshasai-quiz-3003.json');
@@ -640,13 +641,23 @@ function handlePost(path, body, res) {
 // ---------------------------------------------------------------------------
 // ルーティング
 // ---------------------------------------------------------------------------
+function checkToken(u) {
+  if (!SECRET_TOKEN) return true;  // トークン設定なし = チェックなし
+  const token = u.searchParams.get('token');
+  return token === SECRET_TOKEN;
+}
+function denyAccess(res) {
+  res.writeHead(403, { 'Content-Type': 'text/html; charset=utf-8' });
+  res.end(`<!DOCTYPE html><html><head><meta charset="utf-8"><title>Access Denied</title></head><body style="background:#f0f0f0;display:flex;align-items:center;justify-content:center;min-height:100vh"><div style="text-align:center;background:white;padding:40px;border-radius:10px"><h1>🔒 Access Denied</h1><p>このページは保護されています。</p><p>URLが正しいか確認してください。</p></div></body></html>`);
+}
+
 const server = http.createServer(async (req, res) => {
   const u = new URL(req.url, 'http://localhost');
   const path = u.pathname;
 
-  if (req.method === 'GET' && path === '/') return sendHtml(res, PLAYER_HTML);
-  if (req.method === 'GET' && path === '/admin') return sendHtml(res, ADMIN_HTML);
-  if (req.method === 'GET' && path === '/events') return handleSSE(req, res, u);
+  if (req.method === 'GET' && path === '/') { if (!checkToken(u)) return denyAccess(res); return sendHtml(res, PLAYER_HTML); }
+  if (req.method === 'GET' && path === '/admin') { if (!checkToken(u)) return denyAccess(res); return sendHtml(res, ADMIN_HTML); }
+  if (req.method === 'GET' && path === '/events') { if (!checkToken(u)) return denyAccess(res); return handleSSE(req, res, u); }
   if (req.method === 'GET' && path === '/api/info') return sendJson(res, { joinUrl: JOIN_URL, port: PORT });
   if (req.method === 'GET' && path.startsWith('/uploads/')) {
     const fname = nodePath.basename(path);
@@ -673,9 +684,10 @@ const server = http.createServer(async (req, res) => {
       return res.end(data);
     } catch (e) { res.writeHead(404); return res.end('Template not found: ' + TEMPLATE_PPTX); }
   }
-  if (req.method === 'GET' && path === '/present') return sendHtml(res, PRESENT_HTML);
-  if (req.method === 'GET' && path === '/emergency') return sendHtml(res, EMERGENCY_HTML);
+  if (req.method === 'GET' && path === '/present') { if (!checkToken(u)) return denyAccess(res); return sendHtml(res, PRESENT_HTML); }
+  if (req.method === 'GET' && path === '/emergency') { if (!checkToken(u)) return denyAccess(res); return sendHtml(res, EMERGENCY_HTML); }
   if (req.method === 'GET' && path === '/api/view') {
+    if (!checkToken(u)) return sendJson(res, { error: 'Access Denied' }, 403);
     const id = u.searchParams.get('id');
     const name = u.searchParams.get('name');
     const dept = u.searchParams.get('dept');
@@ -838,7 +850,7 @@ const PLAYER_HTML = `<!DOCTYPE html>
 <span class="spark" style="left:80%;top:66%;font-size:20px;animation-delay:.3s">✦</span>
 <div id="app" class="relative z-10 max-w-md mx-auto px-4 py-6 min-h-screen flex flex-col"></div>
 <script>
-var DEPTS=['グロ造','サビコン','金コン','ヘル産','ICTコン','UIコン','エネ産','社シス1','社シス2','経コン','業務IT','マーケコン','AI戦略','スタッフ部'];
+var DEPTS=['グロ造','サビコン','金コン','ヘル産','ICTコン','UIコン','エネ産','社シス1','社シス2','経コン','業務IT','マーケコン','AI戦略','スタッフ部','出向・海外'];
 var S = { id:null, name:null, dept:null, es:null, answeredQ:-1, timer:null, rankTab:'player', lastV:null, rentanPicks:[] };
 var app = document.getElementById('app');
 
