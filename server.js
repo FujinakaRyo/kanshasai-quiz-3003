@@ -175,8 +175,11 @@ function computeRankingList() {
 }
 function deptRankingList() { return memo('deptRanking', computeDeptRankingList); }
 function computeDeptRankingList() {
+  const answered = new Set();
+  Object.values(state.answers).forEach((ans) => Object.keys(ans || {}).forEach((pid) => answered.add(pid)));
   const deptMap = {};
   Object.values(state.players).forEach((p) => {
+    if (!answered.has(p.id)) return;
     const dept = p.dept || '未設定';
     if (!deptMap[dept]) deptMap[dept] = { dept, total: 0, count: 0 };
     deptMap[dept].total += p.score;
@@ -185,11 +188,11 @@ function computeDeptRankingList() {
   return Object.values(deptMap)
     .map((d) => {
       const adjustment = state.deptAdjustments[d.dept] || 0;
-      const adjustedTotal = d.total + adjustment;
-      return { dept: d.dept, avg: Math.round(adjustedTotal / d.count), total: adjustedTotal, count: d.count, adjustment };
+      const baseAvg = Math.round(d.total / d.count);
+      return { dept: d.dept, avg: baseAvg + adjustment, baseAvg, total: d.total, count: d.count, adjustment };
     })
     .sort((a, b) => b.avg - a.avg)
-    .map((d, i) => ({ rank: i + 1, dept: d.dept, avg: d.avg, total: d.total, count: d.count, adjustment: d.adjustment }));
+    .map((d, i) => ({ rank: i + 1, ...d }));
 }
 
 // ---------------------------------------------------------------------------
@@ -1726,7 +1729,7 @@ function addQuestion(){
 function delQuestion(id){ post('/api/admin/deleteQuestion',{id:id}).then(function(r){ if(!r.ok && r.error) alert(r.error); }); }
 
 function showDeptAdjustModal(v){
-  var content='<p class="text-sm text-slate-600 mb-3">各部署に対して加減点を入力してください（現在のスコアに加算されます）</p>';
+  var content='<p class="text-sm text-slate-600 mb-3">各部署に対して加減点を入力してください（部署の平均点に加算されます。例: 8 → 平均+8pt/人）</p>';
   var depts=(v.deptRanking||[]);
   if(depts.length===0){ content+='<div class="text-slate-400 text-sm">部署データがありません</div>'; }
   for(var i=0;i<depts.length;i++){
@@ -2165,9 +2168,9 @@ function renderMonitor(v){
     var dlist=v.deptRanking||[]; var drows='';
     for(var i=0;i<dlist.length;i++){
       var d=dlist[i];
-      var baseAvg=d.adjustment?Math.round(d.avg - d.adjustment / d.count):d.avg;
+      var baseAvg=d.baseAvg;
       var avgText=d.avg+'<span class="text-xs font-normal text-white/60"> pt/人</span>';
-      if(d.adjustment) avgText+='<div class="text-xs text-cyan-300 mt-1">('+baseAvg+'pt + '+Math.round(d.adjustment/d.count)+'pt加点)</div>';
+      if(d.adjustment) avgText+='<div class="text-xs text-cyan-300 mt-1">('+baseAvg+'pt + '+d.adjustment+'pt加点)</div>';
       drows+='<div class="flex items-center gap-3 rounded-xl p-3 '+(i<3?'gold-row':'panel-row')+'">'
         +'<span class="w-8 text-center font-black text-lg shrink-0">'+(i<3?medal[i]:(i+1))+'</span>'
         +'<div class="flex-1 min-w-0"><div class="font-bold truncate">'+esc(d.dept)+'</div>'
@@ -2757,8 +2760,8 @@ function drawAward(v){
     app+='<div style="font-size:4vw;margin-bottom:3vh">'+medals[ds.idx]+'</div>';
     app+='<div style="font-size:3vw;font-weight:900;color:#ffe07a;margin-bottom:2vh">部別 '+ds.label+'</div>';
     if(drank){
-      var baseAvg=drank.adjustment?Math.round(drank.avg - drank.adjustment / drank.count):drank.avg;
-      var adjPerPerson=drank.adjustment?Math.round(drank.adjustment/drank.count):0;
+      var baseAvg=drank.baseAvg;
+      var adjPerPerson=drank.adjustment;
       app+='<div style="font-size:3vw;font-weight:700;margin-bottom:1vh">'+esc(drank.dept)+'</div>';
       app+='<div style="font-size:2vw;color:#9ac8ff;margin-bottom:1vh">'+drank.count+'人 · 合計 '+drank.total+'pt</div>';
       app+='<div style="font-size:2.4vw;font-weight:900;color:#fbbf24">'+drank.avg+'点/人</div>';
