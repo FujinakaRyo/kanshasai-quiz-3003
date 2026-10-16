@@ -4,6 +4,7 @@ WORKDIR /app
 
 COPY server.js pptx-gen.js kanshasai-quiz-3003.json ./
 RUN mkdir -p uploads
+COPY media*.mp* ./uploads/
 
 EXPOSE 3000
 
