@@ -17,7 +17,7 @@ if (!fs.existsSync(UPLOADS_DIR)) fs.mkdirSync(UPLOADS_DIR, { recursive: true });
 const DATA_FILE = nodePath.join(__dirname, 'kanshasai-quiz-3003.json');
 const TEMPLATE_PPTX = 'C:\\Users\\r-fujinaka\\Documents\\本部レククイズ案\\コンサル本部感謝祭_部対抗クイズ_template.pptx';
 const PPTX_GEN_JS = nodePath.join(__dirname, 'pptx-gen.js');
-const TEMPLATE_MEDIA_DIR = 'C:\\Users\\r-fujinaka\\Documents\\本部レククイズ案\\template_unpacked\\ppt\\media';
+const TEMPLATE_MEDIA_DIR = nodePath.join(__dirname, 'uploads');
 function saveQuestions() {
   try { fs.writeFileSync(DATA_FILE, JSON.stringify({ questions: state.questions, periods: state.periods }, null, 2)); } catch (e) { console.error('問題保存失敗:', e.message); }
 }
@@ -751,7 +751,8 @@ const server = http.createServer(async (req, res) => {
   }
   if (req.method === 'GET' && path.startsWith('/api/media/')) {
     const fname = nodePath.basename(path);
-    const fpath = nodePath.join(TEMPLATE_MEDIA_DIR, fname);
+    if (!/\.(mp3|mp4)$/i.test(fname)) { res.writeHead(404); return res.end('Media not found'); }
+    const fpath = [nodePath.join(__dirname, fname), nodePath.join(TEMPLATE_MEDIA_DIR, fname)].find(p => fs.existsSync(p)) || '';
     try {
       const stat = fs.statSync(fpath);
       const size = stat.size;
