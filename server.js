@@ -954,7 +954,7 @@ const PLAYER_HTML = `<!DOCTYPE html>
 <span class="spark" style="left:80%;top:66%;font-size:20px;animation-delay:.3s">✦</span>
 <div id="app" class="relative z-10 max-w-md mx-auto px-4 py-6 min-h-screen flex flex-col"></div>
 <script>
-var DEPTS=['グロ事企・海外拠点・出向','サビコン','金コン','ヘル産','ICTコン','UIコン','エネ産','社シス1','社シス2','経コン','業務IT','マーケコン','AI戦略','本部付・国内スタッフ部室'];
+var DEPTS=['グロ事企・海外拠点・出向','サビコン','グロ造','金コン','ヘル産','ICTコン','UIコン','エネ産','社シス1','社シス2','経コン','業務IT','マーケコン','AI戦略','本部付・国内スタッフ部室'];
 var S = { id:null, name:null, dept:null, es:null, answeredQ:-1, timer:null, rankTab:'player', lastV:null, rentanPicks:[] };
 var app = document.getElementById('app');
 
